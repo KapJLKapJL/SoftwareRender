@@ -49,7 +49,6 @@ bool Window::create()
 	DWORD ERR = GetLastError();
 
 	if (!hwnd)
-		
 		return false;
 
 	return true;
@@ -78,6 +77,13 @@ LRESULT CALLBACK Window::winProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 		if (wparam == SIZE_MINIMIZED)
 		{
 			is_exit = true;
+			return 0;
+		}
+		break;
+	case WM_KEYDOWN:
+		if (wparam == VK_ESCAPE)
+		{
+			SendMessage(hwnd, WM_CLOSE, 0, 0);
 			return 0;
 		}
 		break;
