@@ -29,7 +29,6 @@ bool DDraw::create()
 		IID_IDirectDraw7,
 		NULL
 	);
-
 	if (FAILED(answer)) {
 		return false;
 	}
@@ -39,7 +38,13 @@ bool DDraw::create()
 		DDSCL_FULLSCREEN | DDSCL_ALLOWMODEX | DDSCL_EXCLUSIVE | DDSCL_ALLOWREBOOT);
 	//  Фулскрин         | Прочитать Ламота | Прочитать ламота| Разрешить ctrl+alt+del
 	//														  | рисоваться наверху
+	if (FAILED(answer)) {
+		return false;
+	}
 
+	answer = i_ddraw->SetDisplayMode(
+		800, 600, 32,
+		0, 0);
 	if (FAILED(answer)) {
 		std::cout << "FAILED" << std::endl;
 		return false;
