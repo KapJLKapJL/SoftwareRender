@@ -17,6 +17,7 @@ public:
 	Window* getWindow() { return &window; }
 
 	bool create();
+	bool draw();
 
 private:
 	static DDraw*	ddraw_instance;

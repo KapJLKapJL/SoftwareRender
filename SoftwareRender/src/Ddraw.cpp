@@ -72,3 +72,11 @@ bool DDraw::create()
 
 	return true;
 }
+
+bool DDraw::draw()
+{
+	if (FAILED(i_primary_surface->Flip(NULL, DDFLIP_WAIT))) {
+		return false;
+	}
+	return true;
+}
