@@ -11,7 +11,7 @@ class DDraw
 {
 public:
 	DDraw();
-	~DDraw() {};
+	~DDraw();
 
 	static DDraw* get() { return ddraw_instance; }
 	Window* getWindow() { return &window; }
