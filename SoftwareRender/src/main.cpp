@@ -10,6 +10,7 @@ int main() {
 
 	while (ddraw.getWindow()->run())
 	{
+		ddraw.draw();
 		if (ddraw.getWindow()->isExit())
 			break;
 	}

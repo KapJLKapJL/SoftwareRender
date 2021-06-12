@@ -75,6 +75,20 @@ bool DDraw::create()
 
 bool DDraw::draw()
 {
+	DDBLTFX desc;
+	CLEANING_STRUCT(desc);
+	desc.dwFillColor = 0xFFFFFFFF;
+
+	if (FAILED(
+		i_back_buffer->Blt(
+			NULL, NULL, NULL,
+			DDBLT_COLORFILL | DDBLT_WAIT,
+			&desc)
+	)) {
+		return false;
+	}
+	Sleep(50);
+
 	if (FAILED(i_primary_surface->Flip(NULL, DDFLIP_WAIT))) {
 		return false;
 	}
