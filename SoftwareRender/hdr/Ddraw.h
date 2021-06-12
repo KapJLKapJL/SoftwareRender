@@ -19,10 +19,13 @@ public:
 	bool create();
 
 private:
-	static DDraw* ddraw_instance;
-	Window window;
+	static DDraw*	ddraw_instance;
+	Window			window;
 
-	LPDIRECTDRAW7 i_ddraw;
+	LPDIRECTDRAW7			i_ddraw;
+	LPDIRECTDRAWSURFACE7	i_primary_surface;
+	LPDIRECTDRAWSURFACE7	i_back_buffer;
+
 };
 
 #endif // !MY_DDRAW_H
