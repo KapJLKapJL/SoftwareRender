@@ -1,16 +1,16 @@
 
 
-#include "../hdr/Window.h"
+#include "../hdr/Ddraw.h"
 
 int main() {
-	Window window;
+	DDraw ddraw;
 
-	if (!window.create())
+	if (!ddraw.create())
 		return -1;
 
-	while (window.run())
+	while (ddraw.getWindow()->run())
 	{
-		if (window.isExit())
+		if (ddraw.getWindow()->isExit())
 			break;
 	}
 
