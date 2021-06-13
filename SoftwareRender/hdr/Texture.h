@@ -15,7 +15,6 @@ private:
 	int width;
 	int height;
 	int nmbr_chanels;
-	unsigned char null{0};
 };
 
 #endif // !TEXTURE_H
