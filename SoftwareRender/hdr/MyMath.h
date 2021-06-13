@@ -9,5 +9,15 @@ union pixel_ARGB
 };
 #pragma pack(pop)
 
+struct point2D
+{
+	int x, y;
+};
+
+struct Triangle2D
+{
+	point2D a, b, c;
+};
+
 #endif // !MY_MATH_H
 

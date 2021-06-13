@@ -3,13 +3,12 @@
 
 #include "Window.h"
 #include "Texture.h"
+#include "MyMath.h"
 
 #define INITGUID
 #include <ddraw.h>
 
 #include <iostream>
-
-
 
 class DDraw
 {
@@ -21,7 +20,9 @@ public:
 	Window* getWindow() { return &window; }
 
 	bool create();
-	bool draw(Texture &texture);
+	bool draw(Texture *texture);
+
+	void rasterize(Triangle2D t, DDSURFACEDESC2& desc, Texture *texture);
 
 private:
 	static DDraw*	ddraw_instance;

@@ -1,7 +1,5 @@
 #include "..\hdr\Ddraw.h"
 
-#include "..\hdr\MyMath.h"
-
 #define INTRFC_RELEASE(intrfc) {if(intrfc){intrfc -> Release(); intrfc = nullptr;}}
 #define CLEANING_STRUCT(ddstruct) {memset(&ddstruct, 0, sizeof(ddstruct)); ddstruct.dwSize = (sizeof(ddstruct)); }
 
@@ -75,7 +73,7 @@ bool DDraw::create()
 	return true;
 }
 
-bool DDraw::draw(Texture &texture)
+bool DDraw::draw(Texture *texture)
 {
 
 	// Заливаю цветом
@@ -103,6 +101,8 @@ bool DDraw::draw(Texture &texture)
 	{
 		return false;
 	}
+
+	/*
 	int mempitch = (int)(srfc_desc.lPitch >> 2);
 	UINT* video_buffer = (UINT*)srfc_desc.lpSurface;
 
@@ -115,12 +115,17 @@ bool DDraw::draw(Texture &texture)
 	{
 		for (int y = 0; y < 400; y++)
 		{
-			p = texture.getPixel(u, v);
+			p = texture->getPixel(u, v);
 			video_buffer[x + y * mempitch] = p.ARGB;
 			v += dv;
 		}
 		u += du;
 	}
+	*/
+	Triangle2D t{ {0, 0}, {0, 599}, {799, 300} };
+
+	rasterize(t, srfc_desc, texture);
+	//return false;
 
 	if (FAILED(i_back_buffer->Unlock(NULL)))
 		return false;
@@ -134,4 +139,68 @@ bool DDraw::draw(Texture &texture)
 	Sleep(50);
 
 	return true;
+}
+
+void DDraw::rasterize(Triangle2D t, DDSURFACEDESC2 &desc, Texture* texture)
+{
+	// Сортировка по возрастанию Y (A<B<C)
+	if (t.a.y > t.b.y) std::swap(t.a, t.b);
+	if (t.a.y > t.c.y) std::swap(t.a, t.c);
+	if (t.b.y > t.c.y) std::swap(t.b, t.c);
+
+	// Коэффициент приращения Х относительно У для каждой каждой прямой
+	double kCA = double(t.c.x - t.a.x) / (t.c.y - t.a.y);
+	double kBA = double(t.b.x - t.a.x) / (t.b.y - t.a.y);
+	double kCB = double(t.c.x - t.b.x) / (t.c.y - t.b.y);
+
+	// Лежит ли точка B правее прямой AC? (относительно зрителя)
+	double xAC = kCA * t.b.y + t.a.x;
+	double k_left, k_right;
+	if (t.b.x > xAC)
+	{
+		k_left = kCA;
+		k_right = kBA;
+	}
+	else
+	{
+		k_left = kBA;
+		k_right = kCA;
+	}
+	double x_left = t.a.x;
+	double x_right = t.a.x;
+
+
+	int mempitch = (int)(desc.lPitch >> 2);
+	UINT* video_buffer = (UINT*)desc.lpSurface;
+	// Закраска верхней части треугольника
+	for (int y = t.a.y; y < t.b.y; y++)
+	{
+		for (int x = (int) x_left; x < x_right; x++)
+		{
+			video_buffer[x + y * mempitch] = 0xFFFF0000;
+		}
+		x_left += k_left;
+		x_right += k_right;
+	}
+
+	if (t.b.x > xAC)
+	{
+		k_left = kCA;
+		k_right = kCB;
+	}
+	else
+	{
+		k_left = kCB;
+		k_right = kCA;
+	}
+	// Закраска нижней части треугольника
+	for (int y = t.b.y; y < t.c.y; y++)
+	{
+		for (int x = (int)x_left; x < x_right; x++)
+		{
+			video_buffer[x + y * mempitch] = 0xFFFF0000;
+		}
+		x_left += k_left;
+		x_right += k_right;
+	}
 }

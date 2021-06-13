@@ -22,7 +22,7 @@ int main() {
 
 	while (ddraw.getWindow()->run())
 	{
-		ddraw.draw(texture);
+		ddraw.draw(&texture);
 		if (ddraw.getWindow()->isExit())
 			break;
 	}
