@@ -20,16 +20,12 @@ pixel_ARGB Texture::getPixel(const double u, const double v)
 	int x = int(u * width) % width;
 	int y = int(v * height) % height;
 
-	std::cout << x << std::endl;
-	std::cout << y << std::endl;
-
 	pixel_ARGB p;
 
-	// ”паковали, так упаковали, мды
-	p.R = bits[x * 4 + y * height + 0];
-	p.G = bits[x * 4 + y * height + 1];
-	p.B = bits[x * 4 + y * height + 2];
-	p.A = bits[x * 4 + y * height + 3];
+	p.R = bits[(x + y * width) * 4 + 0];
+	p.G = bits[(x + y * width) * 4 + 1];
+	p.B = bits[(x + y * width) * 4 + 2];
+	p.A = bits[(x + y * width) * 4 + 3];
 
 	return p;
 }

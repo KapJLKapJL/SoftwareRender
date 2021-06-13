@@ -81,7 +81,7 @@ bool DDraw::draw(Texture &texture)
 	// Заливаю цветом
 	DDBLTFX desc;
 	CLEANING_STRUCT(desc);
-	desc.dwFillColor = 0xFFFFFFFF;
+	desc.dwFillColor = 0;
 
 	if (FAILED(
 		i_back_buffer->Blt(
@@ -108,7 +108,7 @@ bool DDraw::draw(Texture &texture)
 
 	double du = 1. / 400;
 	double dv = 1. / 400;
-	double u = 0, v = 0.;
+	double u = 0., v = 0.;
 
 	pixel_ARGB p;
 	for (int x = 0; x < 400; x++)
