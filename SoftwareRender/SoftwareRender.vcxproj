@@ -152,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="hdr\Ddraw.h" />
+    <ClInclude Include="hdr\MyMath.h" />
     <ClInclude Include="hdr\Texture.h" />
     <ClInclude Include="hdr\Window.h" />
   </ItemGroup>

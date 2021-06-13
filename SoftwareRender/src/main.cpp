@@ -10,6 +10,10 @@ int main() {
 	std::cout << texture.getWidth() << std::endl;
 	std::cout << texture.getNumberChanels() << std::endl;
 
+	pixel_ARGB p = texture.getPixel(0.9, 0.5);
+
+	std::cout << p.ARGB << std::endl;
+
 	/*
 	DDraw ddraw;
 
