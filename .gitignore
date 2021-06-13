@@ -1,4 +1,6 @@
 .vs/
 Debug/
 SoftwareRender/Debug
-DXSDK/
+SoftwareRender/DXSDK
+SoftwareRender/stb
+SoftwareRender/banana

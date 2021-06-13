@@ -24,12 +24,18 @@
     <ClCompile Include="src\Ddraw.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="src\Texture.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="hdr\Window.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="hdr\Ddraw.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\Texture.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
