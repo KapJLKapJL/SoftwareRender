@@ -1,5 +1,7 @@
 #include "..\hdr\Ddraw.h"
 
+#include "..\hdr\MyMath.h"
+
 #define INTRFC_RELEASE(intrfc) {if(intrfc){intrfc -> Release(); intrfc = nullptr;}}
 #define CLEANING_STRUCT(ddstruct) {memset(&ddstruct, 0, sizeof(ddstruct)); ddstruct.dwSize = (sizeof(ddstruct)); }
 
@@ -73,8 +75,10 @@ bool DDraw::create()
 	return true;
 }
 
-bool DDraw::draw()
+bool DDraw::draw(Texture &texture)
 {
+
+	// Заливаю цветом
 	DDBLTFX desc;
 	CLEANING_STRUCT(desc);
 	desc.dwFillColor = 0xFFFFFFFF;
@@ -87,10 +91,47 @@ bool DDraw::draw()
 	)) {
 		return false;
 	}
-	Sleep(50);
 
+	// Рисую на поверхности
+	DDSURFACEDESC2 srfc_desc;
+	CLEANING_STRUCT(srfc_desc);
+	if (FAILED(i_back_buffer->Lock(
+		NULL,
+		&srfc_desc,
+		DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT,
+		NULL)))
+	{
+		return false;
+	}
+	int mempitch = (int)(srfc_desc.lPitch >> 2);
+	UINT* video_buffer = (UINT*)srfc_desc.lpSurface;
+
+	double du = 1. / 400;
+	double dv = 1. / 400;
+	double u = 0, v = 0.;
+
+	pixel_ARGB p;
+	for (int x = 0; x < 400; x++)
+	{
+		for (int y = 0; y < 400; y++)
+		{
+			p = texture.getPixel(u, v);
+			video_buffer[x + y * mempitch] = p.ARGB;
+			v += dv;
+		}
+		u += du;
+	}
+
+	if (FAILED(i_back_buffer->Unlock(NULL)))
+		return false;
+
+
+	// Флип
 	if (FAILED(i_primary_surface->Flip(NULL, DDFLIP_WAIT))) {
 		return false;
 	}
+
+	Sleep(50);
+
 	return true;
 }

@@ -14,7 +14,7 @@ int main() {
 
 	std::cout << p.ARGB << std::endl;
 
-	/*
+	
 	DDraw ddraw;
 
 	if (!ddraw.create())
@@ -22,11 +22,11 @@ int main() {
 
 	while (ddraw.getWindow()->run())
 	{
-		ddraw.draw();
+		ddraw.draw(texture);
 		if (ddraw.getWindow()->isExit())
 			break;
 	}
-	*/
+	
 
 	return 0;
 }

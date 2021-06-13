@@ -2,10 +2,14 @@
 #define MY DDRAW_H
 
 #include "Window.h"
+#include "Texture.h"
+
 #define INITGUID
 #include <ddraw.h>
 
 #include <iostream>
+
+
 
 class DDraw
 {
@@ -17,7 +21,7 @@ public:
 	Window* getWindow() { return &window; }
 
 	bool create();
-	bool draw();
+	bool draw(Texture &texture);
 
 private:
 	static DDraw*	ddraw_instance;
