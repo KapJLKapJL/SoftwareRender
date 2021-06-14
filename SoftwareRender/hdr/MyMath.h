@@ -9,15 +9,30 @@ union pixel_ARGB
 };
 #pragma pack(pop)
 
-struct point2D
+union point2D
 {
-	int x, y;
+	struct { int	x, y; };
+	struct { float	u, v; };
+};
+
+struct point3D
+{
+	double x, y, z;
 };
 
 struct Triangle2D
 {
 	point2D a, b, c;
 };
+
+/*
+struct Triangle
+{
+	point3D  *v0,  *v1,  *v2;
+	point2D *vt0, *vt1, *vt2;
+	point3D *vn0, *vn1, *vn2;
+};
+*/
 
 #endif // !MY_MATH_H
 

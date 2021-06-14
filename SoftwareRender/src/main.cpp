@@ -1,9 +1,9 @@
-
-
-#include "../hdr/Ddraw.h"
-#include "../hdr/Texture.h"
+//#include "../hdr/Ddraw.h"
+//#include "../hdr/Texture.h"
+#include "../hdr/Mesh.h"
 
 int main() {
+	/*
 	Texture texture("banana\\textures\\Banana_BaseColor.png");
 
 	std::cout << texture.getHeigth() << std::endl;
@@ -13,6 +13,9 @@ int main() {
 	pixel_ARGB p = texture.getPixel(0.9, 0.5);
 
 	std::cout << p.ARGB << std::endl;
+	*/
+
+	Mesh mesh("banana\\source\\Banana.obj");
 
 	/*
 	DDraw ddraw;
