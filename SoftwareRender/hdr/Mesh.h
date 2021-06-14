@@ -14,11 +14,14 @@ public:
 
 private:
 	std::vector<point3D>  vertexes;
-	void loadVertexes(std::ifstream &file);
+	void loadVertexes(std::ifstream& file);
+
 	std::vector<point2D>  texture_coords;
 	void loadTextureCoords(std::ifstream& file);
+
 	std::vector<point3D>  normals;  // Прпидумать другое название для point3D
-	void loadNormals(char const* filename);
+	void loadNormals(std::ifstream& file);
+
 	//std::vector<Triangle> faces;
 };
 
