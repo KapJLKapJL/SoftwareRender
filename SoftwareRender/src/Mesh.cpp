@@ -1,38 +1,56 @@
 #include "..\hdr\Mesh.h"
 
 #include <iostream>
-#include <fstream>
 
 Mesh::Mesh(char const* filename)
 {
-	loadVertexes(filename);
-	//loadTextureCoords(filename);
+	std::ifstream file(filename);
+
+	if (!file)
+		return; // ???????????
+
+	loadVertexes(file);
+
+	file.clear();
+	file.seekg(0, std::ios::beg);
+	loadTextureCoords(file);
+
 	//loadNormals(filename);
+	file.close();
 }
 
 Mesh::~Mesh()
 {
 }
 
-void Mesh::loadVertexes(char const* filename)
+void Mesh::loadVertexes(std::ifstream &f)
 {
-	std::ifstream file(filename);
-
-	if (!file)
-		return;
-
 	point3D v;
 	std::string s;
-	while (!file.eof())
+	while (!f.eof())
 	{
-		file >> s;
+		f >> s;
 		
 		if (s == "v")
 		{
-			file >> v.x >> v.y >> v.z;
+			f >> v.x >> v.y >> v.z;
 			vertexes.push_back(v);
 		}
 	}
+}
 
-	file.close();
+void Mesh::loadTextureCoords(std::ifstream &f)
+{
+	point2D vt;
+	std::string s;
+	while (!f.eof())
+	{
+		f >> s;
+
+		if (s == "vt")
+		{
+			f >> vt.u >> vt.v;
+			texture_coords.push_back(vt);
+		}
+	}
 }
