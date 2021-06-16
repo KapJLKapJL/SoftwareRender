@@ -14,16 +14,16 @@ public:
 
 private:
 	std::vector<point3D>  vertexes;
-	void loadVertexes(std::ifstream& file);
+	void readVertexes(std::ifstream& file);
 
 	std::vector<point2D>  texture_coords;
-	void loadTextureCoords(std::ifstream& file);
+	void readTextureCoords(std::ifstream& file);
 
 	std::vector<point3D>  normals;  // Прпидумать другое название для point3D
-	void loadNormals(std::ifstream& file);
+	void readNormals(std::ifstream& file);
 
 	std::vector<triangle_indexes> face_indexes;
-	void loadFaceIndexes(std::ifstream& file);
+	void readFaceIndexes(std::ifstream& file);
 };
 
 #endif // !MESH_H

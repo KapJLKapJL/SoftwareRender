@@ -8,21 +8,22 @@ Mesh::Mesh(char const* filename)
 	std::ifstream file(filename);
 
 	if (!file)
-		return; // ???????????
+		return;
 
-	loadVertexes(file);
+	std::string s;
+	while (!file.eof())
+	{
+		file >> s;
 
-	file.clear();
-	file.seekg(0, std::ios::beg);
-	loadTextureCoords(file);
-
-	file.clear();
-	file.seekg(0, std::ios::beg);
-	loadNormals(file);
-
-	file.clear();
-	file.seekg(0, std::ios::beg);
-	loadFaceIndexes(file);
+		if (s == "v")
+			readVertexes(file);
+		if (s == "vt")
+			readTextureCoords(file);
+		if (s == "vn")
+			readNormals(file);
+		if (s == "f")
+			readFaceIndexes(file);
+	}
 
 	file.close();
 }
@@ -31,73 +32,37 @@ Mesh::~Mesh()
 {
 }
 
-void Mesh::loadVertexes(std::ifstream& f)
+void Mesh::readVertexes(std::ifstream& f)
 {
 	point3D v;
-	std::string s;
-	while (!f.eof())
-	{
-		f >> s;
-		
-		if (s == "v")
-		{
-			f >> v.x >> v.y >> v.z;
-			vertexes.push_back(v);
-		}
-	}
+	f >> v.x >> v.y >> v.z;
+	vertexes.push_back(v);
 }
 
-void Mesh::loadTextureCoords(std::ifstream& f)
+void Mesh::readTextureCoords(std::ifstream& f)
 {
 	point2D vt;
-	std::string s;
-	while (!f.eof())
-	{
-		f >> s;
-
-		if (s == "vt")
-		{
-			f >> vt.u >> vt.v;
-			texture_coords.push_back(vt);
-		}
-	}
+	f >> vt.u >> vt.v;
+	texture_coords.push_back(vt);
 }
 
-void Mesh::loadNormals(std::ifstream& f)
+void Mesh::readNormals(std::ifstream& f)
 {
 	point3D vn;
-	std::string s;
-	while (!f.eof())
-	{
-		f >> s;
-
-		if (s == "vn")
-		{
-			f >> vn.x >> vn.y >> vn.z;
-			normals.push_back(vn);
-		}
-	}
+	f >> vn.x >> vn.y >> vn.z;
+	normals.push_back(vn);
 }
 
-void Mesh::loadFaceIndexes(std::ifstream& f)
+void Mesh::readFaceIndexes(std::ifstream& f)
 {
 	triangle_indexes t;
 	std::string s;
-	while (!f.eof())
+	for (int i = 0; i < 3; i++)
 	{
 		f >> s;
-
-		if (s == "f")
-		{
-			for (int i = 0; i < 3; i++)
-			{
-				f >> s;
-				std::istringstream ss(s);
-				char thrash;
-				ss >> t.v[i].ind >> thrash >> t.v[i].n_ind >> thrash >> t.v[i].t_ind;
-			}// Придумать защиту от нетреугольных поверхностей
-			face_indexes.push_back(t);
-		}
-	}
-
+		std::istringstream ss(s);
+		char thrash;
+		ss >> t.v[i].ind >> thrash >> t.v[i].n_ind >> thrash >> t.v[i].t_ind;
+	}// Придумать защиту от нетреугольных поверхностей
+	face_indexes.push_back(t);
 }
