@@ -1,6 +1,7 @@
 #include "..\hdr\Mesh.h"
 
 #include <iostream>
+#include <sstream>
 
 Mesh::Mesh(char const* filename)
 {
@@ -18,6 +19,10 @@ Mesh::Mesh(char const* filename)
 	file.clear();
 	file.seekg(0, std::ios::beg);
 	loadNormals(file);
+
+	file.clear();
+	file.seekg(0, std::ios::beg);
+	loadFaceIndexes(file);
 
 	file.close();
 }
@@ -72,4 +77,27 @@ void Mesh::loadNormals(std::ifstream& f)
 			normals.push_back(vn);
 		}
 	}
+}
+
+void Mesh::loadFaceIndexes(std::ifstream& f)
+{
+	triangle_indexes t;
+	std::string s;
+	while (!f.eof())
+	{
+		f >> s;
+
+		if (s == "f")
+		{
+			for (int i = 0; i < 3; i++)
+			{
+				f >> s;
+				std::istringstream ss(s);
+				char thrash;
+				ss >> t.v[i].ind >> thrash >> t.v[i].n_ind >> thrash >> t.v[i].t_ind;
+			}// Придумать защиту от нетреугольных поверхностей
+			face_indexes.push_back(t);
+		}
+	}
+
 }

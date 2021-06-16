@@ -22,7 +22,8 @@ private:
 	std::vector<point3D>  normals;  // Прпидумать другое название для point3D
 	void loadNormals(std::ifstream& file);
 
-	//std::vector<Triangle> faces;
+	std::vector<triangle_indexes> face_indexes;
+	void loadFaceIndexes(std::ifstream& file);
 };
 
 #endif // !MESH_H

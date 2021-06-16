@@ -25,14 +25,12 @@ struct Triangle2D
 	point2D a, b, c;
 };
 
-/*
-struct Triangle
+
+struct triangle_indexes
 {
-	point3D  *v0,  *v1,  *v2;
-	point2D *vt0, *vt1, *vt2;
-	point3D *vn0, *vn1, *vn2;
+	struct vertex_data { int ind, t_ind, n_ind; }; // Индексы
+	vertex_data v[3]; // Вершины данного треугольника
 };
-*/
 
 #endif // !MY_MATH_H
 
