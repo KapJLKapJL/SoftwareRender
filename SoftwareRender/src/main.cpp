@@ -8,7 +8,7 @@
 int main() {
 	//Texture texture("banana\\textures\\Banana_BaseColor.png");
 
-
+	/*
 	Mesh mesh("banana\\source\\Banana.obj");
 
 	Entity entity;
@@ -20,7 +20,16 @@ int main() {
 		f = entity.getFace();
 		int bgg = 1000;
 	}
+	*/
 
+	vector<2> v = { 1., 2. };
+	vector<2> v1 = { 3., 0. };
+	vector<3> v2;
+
+	float bgg = v[0];
+
+	float dot1 = dot(v, v1);
+	//float dot2 = dot(v1, v2);
 
 	/*
 	DDraw ddraw;
