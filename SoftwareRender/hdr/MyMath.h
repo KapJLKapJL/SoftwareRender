@@ -32,5 +32,16 @@ struct triangle_indexes
 	vertex_data v[3]; // Вершины данного треугольника
 };
 
+
+struct face
+{
+	struct vertex_data
+	{ 
+		point3D coord, vn;
+		point2D vt;
+	};
+	vertex_data v[3];
+};
+
 #endif // !MY_MATH_H
 

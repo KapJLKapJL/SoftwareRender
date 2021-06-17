@@ -12,6 +12,9 @@ public:
 	Mesh(char const *filename);
 	~Mesh();
 
+	unsigned int getFacesVectorSize() { return faces_vector_size; }
+
+	face getFace(unsigned int face_number);
 private:
 	std::vector<point3D>  vertexes;
 	void readVertexes(std::ifstream& file);
@@ -24,6 +27,7 @@ private:
 
 	std::vector<triangle_indexes> face_indexes;
 	void readFaceIndexes(std::ifstream& file);
+	unsigned int faces_vector_size{0};
 };
 
 #endif // !MESH_H

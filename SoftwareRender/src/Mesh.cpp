@@ -23,13 +23,30 @@ Mesh::Mesh(char const* filename)
 			readNormals(file);
 		if (s == "f")
 			readFaceIndexes(file);
-	}
 
+		s = "";
+	}
 	file.close();
+
+	faces_vector_size = face_indexes.size();
 }
 
 Mesh::~Mesh()
 {
+}
+
+face Mesh::getFace(unsigned int face_number)
+{
+	triangle_indexes ti = face_indexes.at(face_number);
+
+	face f;
+	for (int i = 0; i < 3; i++)
+	{
+		f.v[i].coord = vertexes.at(ti.v[i].ind);
+		f.v[i].vn = normals.at(ti.v[i].n_ind);
+		f.v[i].vt = texture_coords.at(ti.v[i].t_ind);
+	}
+	return f;
 }
 
 void Mesh::readVertexes(std::ifstream& f)
@@ -62,7 +79,12 @@ void Mesh::readFaceIndexes(std::ifstream& f)
 		f >> s;
 		std::istringstream ss(s);
 		char thrash;
-		ss >> t.v[i].ind >> thrash >> t.v[i].n_ind >> thrash >> t.v[i].t_ind;
+		int ind, n_ind, t_ind;
+		ss >> ind >> thrash >> t_ind >> thrash >> n_ind;
+		t.v[i].ind = --ind;
+		t.v[i].n_ind = --n_ind;
+		t.v[i].t_ind = --t_ind;
 	}// Придумать защиту от нетреугольных поверхностей
 	face_indexes.push_back(t);
+	
 }

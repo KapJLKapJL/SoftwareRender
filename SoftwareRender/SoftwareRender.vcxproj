@@ -146,6 +146,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Ddraw.cpp" />
+    <ClCompile Include="src\Entity.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\Texture.cpp" />
@@ -153,6 +154,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="hdr\Ddraw.h" />
+    <ClInclude Include="hdr\Entity.h" />
     <ClInclude Include="hdr\Mesh.h" />
     <ClInclude Include="hdr\MyMath.h" />
     <ClInclude Include="hdr\Texture.h" />
