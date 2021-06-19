@@ -1,5 +1,5 @@
-//#include "../hdr/Ddraw.h"
-//#include "../hdr/Texture.h"
+#include "../hdr/Ddraw.h"
+#include "../hdr/Texture.h"
 #include "../hdr/Mesh.h"
 #include "../hdr/Entity.h"
 #include "../hdr/MyMath.h"
@@ -22,15 +22,11 @@ int main() {
 	}
 	*/
 
-	vector<2> v = { 1., 2. };
-	vector<2> v1 = { 3., 0. };
-	vector<3> v2;
-
-	float bgg = v[0];
-
-	float dot1 = dot(v, v1);
-	//float dot2 = dot(v1, v2);
-
+	matrix<2, 2> m1{ {1., 2., 3., 4.} };
+	vector<2> v1{ 3., 0. };
+	auto out1 = m1 * v1;
+	matrix<2, 2> m2{ {3., 4., 0., 2.} };
+	auto out2 = m1 * m2;
 	/*
 	DDraw ddraw;
 
