@@ -9,8 +9,9 @@ bool Entity::eof()
 {
 	if (face_count == mesh->getFacesVectorSize())
 	{
-		return true;
+		// (:
 		face_count = 0;
+		return true;
 	}
 	return false;
 }

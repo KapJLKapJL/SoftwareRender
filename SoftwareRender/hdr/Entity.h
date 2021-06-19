@@ -12,6 +12,7 @@ public:
 	~Entity() {};
 
 	void setDiffuseMap(Texture* texture) { diffuse_map = texture; }
+	Texture* getDiffuseMap() { return diffuse_map; }
 
 	void setMesh(Mesh* mesh_) { mesh = mesh_; }
 

@@ -73,9 +73,64 @@ bool DDraw::create()
 	return true;
 }
 
-bool DDraw::draw(Texture *texture)
+bool DDraw::draw(Entity* entity)
 {
+	// Рисую на поверхности
+	DDSURFACEDESC2 srfc_desc;
+	CLEANING_STRUCT(srfc_desc);
+	if (FAILED(i_back_buffer->Lock(
+		NULL,
+		&srfc_desc,
+		DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT,
+		NULL)))
+	{
+		return false;
+	}
 
+	Triangle2D t{ {1., 1.}, {500.,1.}, {250., 300.} };
+
+	matrix<4, 4> to_world{ {1., 0., 0., 0.,
+						    0., 1., 0., 0.,
+						    0., 0., 1., 50.,
+		                    0., 0., 0., 1.} };
+
+	matrix<3, 4> projection{ {1., 0., 0., 0.,
+		                      0., 1., 0., 0.,
+		                      0., 0., 1., 0.} };
+
+	//matrix<3, 3> viewport{ {} };
+
+	while (!entity->eof())
+	{
+		auto f = entity->getFace();
+		point2D p[3];
+		for (int i = 0; i < 3; i++)
+		{
+			vector<4> v{ f.v[i].coord.x, f.v[i].coord.y, f.v[i].coord.z, 1. };
+			auto world_coord = to_world * v;
+			auto proj = projection * world_coord;
+			p[i].x = 400 + (int)proj[0] * 200 / proj[2];
+			p[i].y = 300 + (int)proj[1] * 200 / proj[2];
+		}
+		t = { {p[0].x, p[0].y},  {p[1].x, p[1].y}, {p[2].x, p[2].y} };
+		rasterize(t, srfc_desc, entity->getDiffuseMap());
+	}
+
+	if (FAILED(i_back_buffer->Unlock(NULL)))
+		return false;
+
+	// Флип
+	if (FAILED(i_primary_surface->Flip(NULL, DDFLIP_WAIT))) {
+		return false;
+	}
+
+	Sleep(500);
+
+	return true;
+}
+
+bool DDraw::clear()
+{
 	// Заливаю цветом
 	DDBLTFX desc;
 	CLEANING_STRUCT(desc);
@@ -89,55 +144,6 @@ bool DDraw::draw(Texture *texture)
 	)) {
 		return false;
 	}
-
-	// Рисую на поверхности
-	DDSURFACEDESC2 srfc_desc;
-	CLEANING_STRUCT(srfc_desc);
-	if (FAILED(i_back_buffer->Lock(
-		NULL,
-		&srfc_desc,
-		DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT,
-		NULL)))
-	{
-		return false;
-	}
-
-	/*
-	int mempitch = (int)(srfc_desc.lPitch >> 2);
-	UINT* video_buffer = (UINT*)srfc_desc.lpSurface;
-
-	double du = 1. / 400;
-	double dv = 1. / 400;
-	double u = 0., v = 0.;
-
-	pixel_ARGB p;
-	for (int x = 0; x < 400; x++)
-	{
-		for (int y = 0; y < 400; y++)
-		{
-			p = texture->getPixel(u, v);
-			video_buffer[x + y * mempitch] = p.ARGB;
-			v += dv;
-		}
-		u += du;
-	}
-	*/
-	Triangle2D t{ {0, 0}, {0, 599}, {799, 300} };
-
-	rasterize(t, srfc_desc, texture);
-	//return false;
-
-	if (FAILED(i_back_buffer->Unlock(NULL)))
-		return false;
-
-
-	// Флип
-	if (FAILED(i_primary_surface->Flip(NULL, DDFLIP_WAIT))) {
-		return false;
-	}
-
-	Sleep(50);
-
 	return true;
 }
 

@@ -2,7 +2,7 @@
 #define MY DDRAW_H
 
 #include "Window.h"
-#include "Texture.h"
+#include "Entity.h"
 #include "MyMath.h"
 
 #define INITGUID
@@ -20,7 +20,8 @@ public:
 	Window* getWindow() { return &window; }
 
 	bool create();
-	bool draw(Texture *texture);
+	bool draw(Entity *entity);
+	bool clear();
 
 	void rasterize(Triangle2D t, DDSURFACEDESC2& desc, Texture *texture);
 
