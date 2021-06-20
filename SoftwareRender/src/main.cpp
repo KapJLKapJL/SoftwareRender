@@ -13,7 +13,7 @@ int main() {
 	Mesh cube("");
 
 	Entity entity;
-	entity.setMesh(&cube);
+	entity.setMesh(&mesh);
 	entity.setDiffuseMap(&texture);
 
 	DDraw ddraw;

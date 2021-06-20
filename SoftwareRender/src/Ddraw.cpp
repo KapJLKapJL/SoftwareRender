@@ -125,15 +125,21 @@ bool DDraw::draw(Entity* entity)
 	Triangle2D t{ {400.12539, 100.1351345}, {400.125154,500.12514}, {10., 10.} };
 
 	
-	static float angle;
+	static double angle;
 	angle += 0.0275125;
-	float angle_sin = sin(angle);
-	float angle_cos = cos(angle);
+	double angle_sin = sin(angle);
+	double angle_cos = cos(angle);
 
+	/*
 	matrix<4, 4> to_world{ {1.,        0.,         0., 0.,
 						    0., angle_cos, -angle_sin, 0.,
-						    0., angle_sin,  angle_cos, 5.,
+						    0., angle_sin,  angle_cos, 100.,
 		                    0.,        0.,         0., 1.} };
+	*/
+	matrix<4, 4> to_world{ {1.,        0.,         0., 0.,
+							0.,        1.,         0., 0.,
+							0.,        0.,         1., 100.,
+							0.,        0.,         0., 1.} };
 
 	matrix<3, 4> projection{ {1., 0., 0., 0.,
 		                      0., 1., 0., 0.,
@@ -210,13 +216,13 @@ void DDraw::rasterize(Triangle2D t, DDSURFACEDESC2 &desc, Texture* texture)
 	if (t.b.y > t.c.y) std::swap(t.b, t.c);
 
 	// Коэффициент приращения Х относительно У для каждой каждой прямой
-	float kCA = float(t.c.x - t.a.x) / (t.c.y - t.a.y);
-	float kBA = float(t.b.x - t.a.x) / (t.b.y - t.a.y);
-	float kCB = float(t.c.x - t.b.x) / (t.c.y - t.b.y);
+	double kCA = double(t.c.x - t.a.x) / (t.c.y - t.a.y);
+	double kBA = double(t.b.x - t.a.x) / (t.b.y - t.a.y);
+	double kCB = double(t.c.x - t.b.x) / (t.c.y - t.b.y);
 
 	// Лежит ли точка B правее прямой AC? (относительно зрителя)
-	float xAC = kCA * t.b.y + t.a.x;
-	float k_left, k_right;
+	double xAC = kCA * (t.b.y - t.a.y) + t.a.x; // Тут была ошибка. Вспомнить откуда взялось это выражение!!!
+	double k_left, k_right;
 	if (t.b.x > xAC)
 	{
 		k_left = kCA;
@@ -227,8 +233,8 @@ void DDraw::rasterize(Triangle2D t, DDSURFACEDESC2 &desc, Texture* texture)
 		k_left = kBA;
 		k_right = kCA;
 	}
-	float x_left = t.a.x;
-	float x_right = t.a.x;
+	double x_left = t.a.x;
+	double x_right = t.a.x;
 
 
 	int mempitch = (int)(desc.lPitch >> 2);
