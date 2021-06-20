@@ -17,5 +17,5 @@ bool isBackFace(const vector<4>& a, const vector<4>& b, const vector<4>& c)
 	auto normal = cross({ AB[0], AB[1], AB[2] }, { AC[0], AC[1], AC[2] });
 	auto scalar = dot(normal, { a[0], a[1], a[2] });
 
-	return scalar > 0;
+	return scalar > 0.;
 }

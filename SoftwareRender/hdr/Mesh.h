@@ -16,6 +16,8 @@ public:
 
 	face getFace(unsigned int face_number);
 private:
+	void makeCube();
+
 	std::vector<point3D>  vertexes;
 	void readVertexes(std::ifstream& file);
 

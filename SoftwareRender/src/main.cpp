@@ -10,9 +10,10 @@ int main() {
 
 	
 	Mesh mesh("banana\\source\\Banana.obj");
+	Mesh cube("");
 
 	Entity entity;
-	entity.setMesh(&mesh);
+	entity.setMesh(&cube);
 	entity.setDiffuseMap(&texture);
 
 	DDraw ddraw;

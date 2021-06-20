@@ -88,7 +88,7 @@ bool DDraw::draw(Entity* entity)
 	}
 
 
-	
+	/*
 	static float x, y;
 	static float dx, dy;
 
@@ -119,12 +119,12 @@ bool DDraw::draw(Entity* entity)
 
 	x += dx;
 	y += dy;
-	
+	*/
 	
 
-	Triangle2D t{ {400.12539, 100.1351345}, {400.125154,500.12514}, {x, y} };
+	Triangle2D t{ {400.12539, 100.1351345}, {400.125154,500.12514}, {10., 10.} };
 
-	/*
+	
 	static float angle;
 	angle += 0.0275125;
 	float angle_sin = sin(angle);
@@ -132,7 +132,7 @@ bool DDraw::draw(Entity* entity)
 
 	matrix<4, 4> to_world{ {1.,        0.,         0., 0.,
 						    0., angle_cos, -angle_sin, 0.,
-						    0., angle_sin,  angle_cos, 150.,
+						    0., angle_sin,  angle_cos, 5.,
 		                    0.,        0.,         0., 1.} };
 
 	matrix<3, 4> projection{ {1., 0., 0., 0.,
@@ -167,9 +167,9 @@ bool DDraw::draw(Entity* entity)
 		t = { p[0], p[1], p[2] };
 		rasterize(t, srfc_desc, entity->getDiffuseMap());
 	}
-	*/
+	
 
-	rasterize(t, srfc_desc, entity->getDiffuseMap());
+	//rasterize(t, srfc_desc, entity->getDiffuseMap());
 
 	if (FAILED(i_back_buffer->Unlock(NULL)))
 		return false;
