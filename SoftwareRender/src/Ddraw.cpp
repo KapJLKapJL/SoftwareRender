@@ -87,12 +87,53 @@ bool DDraw::draw(Entity* entity)
 		return false;
 	}
 
-	Triangle2D t{ {1., 1.}, {500.,1.}, {250., 300.} };
 
-	matrix<4, 4> to_world{ {1., 0., 0., 0.,
-						    0., 1., 0., 0.,
-						    0., 0., 1., 50.,
-		                    0., 0., 0., 1.} };
+	
+	static float x, y;
+	static float dx, dy;
+
+	if (x > 550.) {
+		x = 545.;
+		dx = 0;
+		dy = -15.;
+		std::cout << "YUP" << std::endl;
+	}
+	if (y < 50.)
+	{
+		y = 55.;
+		dy = 0;
+		dx = -15.;
+	}
+	if (x < 50.)
+	{
+		x = 55.;
+		dx = 0;
+		dy = 15.;
+	}
+	if (y > 550.)
+	{
+		y = 545.;
+		dy = 0.;
+		dx = 15.;
+	}
+
+	x += dx;
+	y += dy;
+	
+	
+
+	Triangle2D t{ {400.12539, 100.1351345}, {400.125154,500.12514}, {x, y} };
+
+	/*
+	static float angle;
+	angle += 0.0275125;
+	float angle_sin = sin(angle);
+	float angle_cos = cos(angle);
+
+	matrix<4, 4> to_world{ {1.,        0.,         0., 0.,
+						    0., angle_cos, -angle_sin, 0.,
+						    0., angle_sin,  angle_cos, 150.,
+		                    0.,        0.,         0., 1.} };
 
 	matrix<3, 4> projection{ {1., 0., 0., 0.,
 		                      0., 1., 0., 0.,
@@ -103,18 +144,32 @@ bool DDraw::draw(Entity* entity)
 	while (!entity->eof())
 	{
 		auto f = entity->getFace();
+		// Вершинный шейдер
+		vector<4> v[3];
+		for (int i = 0; i < 3; i++)
+		{
+			v[i] = { f.v[i].coord.x, f.v[i].coord.y, f.v[i].coord.z, 1. };
+			v[i] = to_world * v[i];
+		}
+
+		if (isBackFace(v[0], v[1], v[2]))
+			continue;
+
+		// Пиксельный шейдер
 		point2D p[3];
 		for (int i = 0; i < 3; i++)
 		{
-			vector<4> v{ f.v[i].coord.x, f.v[i].coord.y, f.v[i].coord.z, 1. };
-			auto world_coord = to_world * v;
-			auto proj = projection * world_coord;
+			auto proj = projection * v[i];
 			p[i].x = 400 + (int)proj[0] * 200 / proj[2];
-			p[i].y = 300 + (int)proj[1] * 200 / proj[2];
+			p[i].y = 300 - (int)proj[1] * 200 / proj[2];
 		}
-		t = { {p[0].x, p[0].y},  {p[1].x, p[1].y}, {p[2].x, p[2].y} };
+
+		t = { p[0], p[1], p[2] };
 		rasterize(t, srfc_desc, entity->getDiffuseMap());
 	}
+	*/
+
+	rasterize(t, srfc_desc, entity->getDiffuseMap());
 
 	if (FAILED(i_back_buffer->Unlock(NULL)))
 		return false;
@@ -124,7 +179,7 @@ bool DDraw::draw(Entity* entity)
 		return false;
 	}
 
-	Sleep(500);
+	Sleep(55);
 
 	return true;
 }
@@ -155,13 +210,13 @@ void DDraw::rasterize(Triangle2D t, DDSURFACEDESC2 &desc, Texture* texture)
 	if (t.b.y > t.c.y) std::swap(t.b, t.c);
 
 	// Коэффициент приращения Х относительно У для каждой каждой прямой
-	double kCA = double(t.c.x - t.a.x) / (t.c.y - t.a.y);
-	double kBA = double(t.b.x - t.a.x) / (t.b.y - t.a.y);
-	double kCB = double(t.c.x - t.b.x) / (t.c.y - t.b.y);
+	float kCA = float(t.c.x - t.a.x) / (t.c.y - t.a.y);
+	float kBA = float(t.b.x - t.a.x) / (t.b.y - t.a.y);
+	float kCB = float(t.c.x - t.b.x) / (t.c.y - t.b.y);
 
 	// Лежит ли точка B правее прямой AC? (относительно зрителя)
-	double xAC = kCA * t.b.y + t.a.x;
-	double k_left, k_right;
+	float xAC = kCA * t.b.y + t.a.x;
+	float k_left, k_right;
 	if (t.b.x > xAC)
 	{
 		k_left = kCA;
@@ -172,8 +227,8 @@ void DDraw::rasterize(Triangle2D t, DDSURFACEDESC2 &desc, Texture* texture)
 		k_left = kBA;
 		k_right = kCA;
 	}
-	double x_left = t.a.x;
-	double x_right = t.a.x;
+	float x_left = t.a.x;
+	float x_right = t.a.x;
 
 
 	int mempitch = (int)(desc.lPitch >> 2);
@@ -193,18 +248,22 @@ void DDraw::rasterize(Triangle2D t, DDSURFACEDESC2 &desc, Texture* texture)
 	{
 		k_left = kCA;
 		k_right = kCB;
+		x_left = x_left;
+		x_right = t.b.x;
 	}
 	else
 	{
 		k_left = kCB;
 		k_right = kCA;
+		x_left = t.b.x;
+		x_right = x_right;
 	}
 	// Закраска нижней части треугольника
 	for (int y = t.b.y; y < t.c.y; y++)
 	{
 		for (int x = (int)x_left; x < x_right; x++)
 		{
-			video_buffer[x + y * mempitch] = 0xFFFF0000;
+			video_buffer[x + y * mempitch] = 0xFF00FF00;
 		}
 		x_left += k_left;
 		x_right += k_right;

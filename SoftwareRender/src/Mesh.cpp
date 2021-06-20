@@ -59,7 +59,7 @@ void Mesh::readVertexes(std::ifstream& f)
 void Mesh::readTextureCoords(std::ifstream& f)
 {
 	point2D vt;
-	f >> vt.u >> vt.v;
+	f >> vt.x >> vt.y;
 	texture_coords.push_back(vt);
 }
 

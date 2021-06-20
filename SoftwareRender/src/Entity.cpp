@@ -2,7 +2,8 @@
 
 face Entity::getFace()
 {
-	return mesh->getFace(face_count++);
+	auto f = mesh->getFace(face_count++);
+	return f;
 }
 
 bool Entity::eof()
