@@ -216,9 +216,9 @@ void DDraw::rasterize(Triangle2D t, DDSURFACEDESC2 &desc, Texture* texture)
 	if (t.b.y > t.c.y) std::swap(t.b, t.c);
 
 	// Коэффициент приращения Х относительно У для каждой каждой прямой
-	double kCA = double(t.c.x - t.a.x) / (t.c.y - t.a.y);
-	double kBA = double(t.b.x - t.a.x) / (t.b.y - t.a.y);
-	double kCB = double(t.c.x - t.b.x) / (t.c.y - t.b.y);
+	double kCA = (t.c.x - t.a.x) / (t.c.y - t.a.y);
+	double kBA = (t.b.x - t.a.x) / (t.b.y - t.a.y);
+	double kCB = (t.c.x - t.b.x) / (t.c.y - t.b.y);
 
 	// Лежит ли точка B правее прямой AC? (относительно зрителя)
 	double xAC = kCA * (t.b.y - t.a.y) + t.a.x; // Тут была ошибка. Вспомнить откуда взялось это выражение!!!
@@ -239,16 +239,25 @@ void DDraw::rasterize(Triangle2D t, DDSURFACEDESC2 &desc, Texture* texture)
 
 	int mempitch = (int)(desc.lPitch >> 2);
 	UINT* video_buffer = (UINT*)desc.lpSurface;
-	// Закраска верхней части треугольника
-	for (int y = t.a.y; y < t.b.y; y++)
+	auto scanLine = [&](const int& y_top, const int& y_bot)
 	{
-		for (int x = (int) x_left; x < x_right; x++)
+		int x_l;
+		int x_r;
+		for (int y = y_top; y < y_bot; y++)
 		{
-			video_buffer[x + y * mempitch] = 0xFFFF0000;
+			x_l = (int)x_left;
+			x_r = (int)x_right;
+			for (int x = x_l; x < x_r; x++)
+			{
+				video_buffer[x + y * mempitch] = 0xFFFF0000;
+			}
+			x_left += k_left;
+			x_right += k_right;
 		}
-		x_left += k_left;
-		x_right += k_right;
-	}
+	};
+
+	// Закраска верхнего треугольника
+	scanLine((int) t.a.y, (int)t.b.y);
 
 	if (t.b.x > xAC)
 	{
@@ -264,14 +273,7 @@ void DDraw::rasterize(Triangle2D t, DDSURFACEDESC2 &desc, Texture* texture)
 		x_left = t.b.x;
 		x_right = x_right;
 	}
-	// Закраска нижней части треугольника
-	for (int y = t.b.y; y < t.c.y; y++)
-	{
-		for (int x = (int)x_left; x < x_right; x++)
-		{
-			video_buffer[x + y * mempitch] = 0xFF00FF00;
-		}
-		x_left += k_left;
-		x_right += k_right;
-	}
+
+	// Закраска нижнего треугольника
+	scanLine((int)t.b.y, (int)t.c.y);
 }
