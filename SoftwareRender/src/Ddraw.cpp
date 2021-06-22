@@ -88,40 +88,6 @@ bool DDraw::draw(Entity* entity)
 	}
 
 
-	/*
-	static float x, y;
-	static float dx, dy;
-
-	if (x > 550.) {
-		x = 545.;
-		dx = 0;
-		dy = -15.;
-		std::cout << "YUP" << std::endl;
-	}
-	if (y < 50.)
-	{
-		y = 55.;
-		dy = 0;
-		dx = -15.;
-	}
-	if (x < 50.)
-	{
-		x = 55.;
-		dx = 0;
-		dy = 15.;
-	}
-	if (y > 550.)
-	{
-		y = 545.;
-		dy = 0.;
-		dx = 15.;
-	}
-
-	x += dx;
-	y += dy;
-	*/
-	
-
 	Triangle2D t{ {400.12539, 100.1351345}, {400.125154,500.12514}, {10., 10.} };
 
 	
@@ -166,16 +132,14 @@ bool DDraw::draw(Entity* entity)
 		for (int i = 0; i < 3; i++)
 		{
 			auto proj = projection * v[i];
-			p[i].x = 400 + (int)proj[0] * 200 / proj[2];
-			p[i].y = 300 - (int)proj[1] * 200 / proj[2];
+			// viewport
+			p[i].x = 400 + proj[0] * 200 / proj[2];
+			p[i].y = 300 - proj[1] * 200 / proj[2];
 		}
 
 		t = { p[0], p[1], p[2] };
 		rasterize(t, srfc_desc, entity->getDiffuseMap());
 	}
-	
-
-	//rasterize(t, srfc_desc, entity->getDiffuseMap());
 
 	if (FAILED(i_back_buffer->Unlock(NULL)))
 		return false;
@@ -247,9 +211,10 @@ void DDraw::rasterize(Triangle2D t, DDSURFACEDESC2 &desc, Texture* texture)
 		{
 			x_l = (int)x_left;
 			x_r = (int)x_right;
+			int y_mempitch = y * mempitch;
 			for (int x = x_l; x < x_r; x++)
 			{
-				video_buffer[x + y * mempitch] = 0xFFFF0000;
+				video_buffer[x + y_mempitch] = 0xFFFF0000;
 			}
 			x_left += k_left;
 			x_right += k_right;
