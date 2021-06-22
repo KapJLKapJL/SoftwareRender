@@ -3,12 +3,13 @@
 
 /////////////////////////////////////
 #pragma pack(push, 1)
-union pixel_ARGB
+union color
 {
 	struct { unsigned char B, G, R, A; }; //(0 - A) (1 - R) (2 - G) (3 - B)
 	unsigned int ARGB;
 };
 #pragma pack(pop)
+
 
 struct triangle_indexes
 {

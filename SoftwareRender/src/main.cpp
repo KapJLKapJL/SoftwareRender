@@ -16,7 +16,6 @@ int main() {
 	entity.setMesh(&mesh);
 	entity.setDiffuseMap(&texture);
 
-	
 	DDraw ddraw;
 
 	if (!ddraw.create())

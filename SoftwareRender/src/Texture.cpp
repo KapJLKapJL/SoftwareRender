@@ -15,12 +15,12 @@ Texture::~Texture()
 	stbi_image_free(bits);
 }
 
-pixel_ARGB Texture::getPixel(const double u, const double v)
+color Texture::getPixel(const double u, const double v)
 {
 	int x = int(u * width) % width;
 	int y = int(v * height) % height;
 
-	pixel_ARGB p;
+	color p;
 
 	p.R = bits[(x + y * width) * 4 + 0];
 	p.G = bits[(x + y * width) * 4 + 1];
