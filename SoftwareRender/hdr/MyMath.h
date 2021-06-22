@@ -15,6 +15,8 @@ struct triangle_indexes
 	struct vertex_data { int ind, t_ind, n_ind; }; // Индексы
 	vertex_data v[3]; // Вершины данного треугольника
 };
+//////////////////////////////////////
+
 
 ////////////  MATRIX  ///////////////
 
@@ -101,12 +103,6 @@ template<unsigned int nrows_l, unsigned int ncols_l, unsigned int ncols_r> matri
 ///////////////////////////////////////
 
 
-//////////// FOR RENDER ////////////
-bool isBackFace(const vector<4>& a, const vector<4>& b, const vector<4>& c);
-
-////////////////////////////////////
-
-
 //////////// BASE TIPS ////////////
 
 template<> struct vector<3>
@@ -157,9 +153,13 @@ struct Triangle2D
 {
 	point2D a, b, c;
 };
-
-
 ///////////////////////////////////
+
+
+//////////// FOR RENDER ////////////
+bool isBackFace(const vector<4>& a, const vector<4>& b, const vector<4>& c);
+point3D barycentric(const point2D &a, const point2D &b, const point2D& c, const point2D& p);
+////////////////////////////////////
 
 #endif // !MY_MATH_H
 

@@ -16,6 +16,7 @@ int main() {
 	entity.setMesh(&mesh);
 	entity.setDiffuseMap(&texture);
 
+	
 	DDraw ddraw;
 
 	if (!ddraw.create())
@@ -28,6 +29,7 @@ int main() {
 		ddraw.clear();
 		ddraw.draw(&entity);
 	}
+	
 
 	return 0;
 }

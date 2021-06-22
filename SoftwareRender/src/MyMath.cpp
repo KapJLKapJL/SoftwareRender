@@ -19,3 +19,13 @@ bool isBackFace(const vector<4>& a, const vector<4>& b, const vector<4>& c)
 
 	return scalar > 0.;
 }
+
+point3D barycentric(const point2D& a, const point2D& b, const point2D& c, const point2D& p)
+{
+	point3D uv = cross({c.x - a.x, b.x - a.x, a.x - p.x}, { c.y - a.y, b.y - a.y, a.y - p.y });
+
+	double u = uv.x / uv.z;
+	double v = uv.y / uv.z;
+
+	return {1.-u-v, u, v};
+}

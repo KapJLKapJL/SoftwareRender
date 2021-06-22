@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "..\hdr\Ddraw.h"
 
 #define INTRFC_RELEASE(intrfc) {if(intrfc){intrfc -> Release(); intrfc = nullptr;}}
@@ -96,16 +98,19 @@ bool DDraw::draw(Entity* entity)
 	double angle_sin = sin(angle);
 	double angle_cos = cos(angle);
 
-	/*
+	
 	matrix<4, 4> to_world{ {1.,        0.,         0., 0.,
 						    0., angle_cos, -angle_sin, 0.,
-						    0., angle_sin,  angle_cos, 100.,
+						    0., angle_sin,  angle_cos, 150.,
 		                    0.,        0.,         0., 1.} };
-	*/
+	
+
+	/*
 	matrix<4, 4> to_world{ {1.,        0.,         0., 0.,
 							0.,        1.,         0., 0.,
 							0.,        0.,         1., 100.,
 							0.,        0.,         0., 1.} };
+	*/
 
 	matrix<3, 4> projection{ {1., 0., 0., 0.,
 		                      0., 1., 0., 0.,
@@ -138,7 +143,8 @@ bool DDraw::draw(Entity* entity)
 		}
 
 		t = { p[0], p[1], p[2] };
-		rasterize(t, srfc_desc, entity->getDiffuseMap());
+		//rasterize(t, srfc_desc, entity->getDiffuseMap());
+		barRastrize({ p[0], p[1], p[2] }, srfc_desc);
 	}
 
 	if (FAILED(i_back_buffer->Unlock(NULL)))
@@ -171,6 +177,7 @@ bool DDraw::clear()
 	}
 	return true;
 }
+
 
 void DDraw::rasterize(Triangle2D t, DDSURFACEDESC2 &desc, Texture* texture)
 {
@@ -241,4 +248,42 @@ void DDraw::rasterize(Triangle2D t, DDSURFACEDESC2 &desc, Texture* texture)
 
 	// Закраска нижнего треугольника
 	scanLine((int)t.b.y, (int)t.c.y);
+}
+
+void DDraw::barRastrize(matrix<3, 2> p, DDSURFACEDESC2& desc)
+{      
+	// (A<B<C) .y
+	if (p[0][1] > p[1][1]) std::swap(p[0], p[1]);
+	if (p[0][1] > p[2][1]) std::swap(p[0], p[2]);
+	if (p[1][1] > p[2][1]) std::swap(p[1], p[2]);
+
+	int top = p[0][1] > 0.01   ? (int)p[0][1] : 0;
+	int bot = p[2][1] < 598.99 ? (int)p[2][1] : 599;
+	if (top > bot)
+		return;
+
+	int left  = (int) min(p[0][0], min(p[1][0], p[2][0]));
+	int right = (int) max(p[0][0], max(p[1][0], p[2][0]));
+
+	left  = max(left, 0);
+	right = min(right, 799);
+
+	if (left > right)
+		return;
+
+
+	int mempitch = (int)(desc.lPitch >> 2);
+	UINT* video_buffer = (UINT*)desc.lpSurface;
+	UINT color = 0xFF + rand() % 0xFFFFFF;
+	for (int y = top; y <= bot; y++)
+	{
+		int y_mempitch = y * mempitch;
+		for (int x = left; x <= right; x++)
+		{
+			auto bar_screen = barycentric(p[0], p[1], p[2], { (double)x, (double)y });
+			if (bar_screen.x < 0. || bar_screen.y < 0. || bar_screen.z < 0.)
+				continue;
+			video_buffer[x + y_mempitch] = color;
+		}
+	}
 }

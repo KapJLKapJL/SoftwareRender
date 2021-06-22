@@ -24,6 +24,7 @@ public:
 	bool clear();
 
 	void rasterize(Triangle2D t, DDSURFACEDESC2& desc, Texture *texture);
+	void barRastrize(matrix<3, 2> p, DDSURFACEDESC2& desc);
 
 private:
 	static DDraw*	ddraw_instance;
