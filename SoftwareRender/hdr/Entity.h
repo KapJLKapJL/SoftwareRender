@@ -4,6 +4,7 @@
 #include "Mesh.h"
 #include "Texture.h"
 #include "MyMath.h"
+#include "AbstractMesh.h"
 
 class Entity
 {
@@ -14,7 +15,7 @@ public:
 	void setDiffuseMap(Texture* texture) { diffuse_map = texture; }
 	Texture* getDiffuseMap() { return diffuse_map; }
 
-	void setMesh(Mesh* mesh_) { mesh = mesh_; }
+	void setMesh(abstrctMesh* mesh_) { mesh = mesh_; }
 
 	face getFace();
 	bool eof();
@@ -26,7 +27,7 @@ public:
 private:
 	Texture* diffuse_map{nullptr};
 
-	Mesh* mesh{nullptr};
+	abstrctMesh* mesh{nullptr};
 	unsigned int face_count{0};
 
 	matrix<4, 4> model{ {1., 0., 0., 0.,

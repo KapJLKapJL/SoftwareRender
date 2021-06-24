@@ -4,32 +4,22 @@
 #include <vector>
 #include <fstream>
 
-#include "MyMath.h"
+#include "AbstractMesh.h"
 
-class Mesh
+
+class Mesh : public abstrctMesh
 {
 public:
 	Mesh(char const *filename);
-	~Mesh();
+	virtual ~Mesh() {};
 
-	unsigned int getFacesVectorSize() { return faces_vector_size; }
-
-	face getFace(unsigned int face_number);
 private:
-	void makeCube();
+	void readVertexes() override;
+	void readTextureCoords() override;
+	void readNormals() override;
+	void readFaceIndexes() override;
 
-	std::vector<point3D>  vertexes;
-	void readVertexes(std::ifstream& file);
-
-	std::vector<point2D>  texture_coords;
-	void readTextureCoords(std::ifstream& file);
-
-	std::vector<point3D>  normals;  // Прпидумать другое название для point3D
-	void readNormals(std::ifstream& file);
-
-	std::vector<triangle_indexes> face_indexes;
-	void readFaceIndexes(std::ifstream& file);
-	unsigned int faces_vector_size{0};
+	std::ifstream file;
 };
 
 #endif // !MESH_H

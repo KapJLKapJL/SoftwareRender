@@ -5,11 +5,13 @@
 
 Mesh::Mesh(char const* filename)
 {
-	std::ifstream file(filename);
+	//std::ifstream file(filename);
+
+	file.open(filename);
 
 	if (!file)
 	{
-		makeCube();
+		return;
 	}
 	else
 	{
@@ -19,13 +21,13 @@ Mesh::Mesh(char const* filename)
 			file >> s;
 
 			if (s == "v")
-				readVertexes(file);
+				readVertexes();
 			if (s == "vt")
-				readTextureCoords(file);
+				readTextureCoords();
 			if (s == "vn")
-				readNormals(file);
+				readNormals();
 			if (s == "f")
-				readFaceIndexes(file);
+				readFaceIndexes();
 
 			s = "";
 		}
@@ -35,165 +37,35 @@ Mesh::Mesh(char const* filename)
 	faces_vector_size = face_indexes.size();
 }
 
-Mesh::~Mesh()
-{
-}
-
-face Mesh::getFace(unsigned int face_number)
-{
-	triangle_indexes ti = face_indexes.at(face_number);
-
-	face f;
-	for (int i = 0; i < 3; i++)
-	{
-		f.v[i].coord = vertexes.at(ti.v[i].ind);
-		f.v[i].vn = normals.at(ti.v[i].n_ind);
-		f.v[i].vt = texture_coords.at(ti.v[i].t_ind);
-	}
-	return f;
-}
-
-void Mesh::makeCube()
-{
-	// Vertexes
-	point3D v;
-	v = { 1, 1, 1 };//0
-	vertexes.push_back(v);
-	v = { -1, 1, 1 };//1
-	vertexes.push_back(v);
-	v = { -1, -1, 1 };//2
-	vertexes.push_back(v);
-	v = { 1, -1, 1 };//3
-	vertexes.push_back(v);
-	v = { 1, 1, -1 };//4
-	vertexes.push_back(v);
-	v = { -1, 1, -1 };//5
-	vertexes.push_back(v);
-	v = { -1, -1, -1 };//6
-	vertexes.push_back(v);
-	v = { 1, -1, -1 };//7
-	vertexes.push_back(v);
-
-	// Normals
-	point3D n;
-	n = { 0, 0, 1 };
-	normals.push_back(n);
-	n = { 1, 0, 0 };
-	normals.push_back(n);
-	n = { 0, 0, -1 };
-	normals.push_back(n);
-	n = { -1, 0, 0 };
-	normals.push_back(n);
-	n = { 0, 1, 0 };
-	normals.push_back(n);
-	n = { 0, -1, 0 };
-	normals.push_back(n);
-
-	// Texture coords
-	point2D uv;
-	uv = { 0, 0 };
-	texture_coords.push_back(uv);
-	uv = { 1, 0 };
-	texture_coords.push_back(uv);
-	uv = { 0, 1 };
-	texture_coords.push_back(uv);
-	uv = { 1, 1 };
-	texture_coords.push_back(uv);
-
-
-	// Triangles
-	triangle_indexes t;
-
-	t.v[0].ind = 0; t.v[1].ind = 1; t.v[2].ind = 2;
-	t.v[0].n_ind = 0; t.v[1].n_ind = 0; t.v[2].n_ind = 0;
-	t.v[0].t_ind = 3; t.v[1].t_ind = 2; t.v[2].t_ind = 0;
-	face_indexes.push_back(t);
-
-	t.v[0].ind = 0; t.v[1].ind = 2; t.v[2].ind = 3;
-	t.v[0].n_ind = 0; t.v[1].n_ind = 0; t.v[2].n_ind = 0;
-	t.v[0].t_ind = 3; t.v[1].t_ind = 0; t.v[2].t_ind = 1;
-	face_indexes.push_back(t);
-
-	t.v[0].ind = 4; t.v[1].ind = 0; t.v[2].ind = 3;
-	t.v[0].n_ind = 1; t.v[1].n_ind = 1; t.v[2].n_ind = 1;
-	t.v[0].t_ind = 3; t.v[1].t_ind = 2; t.v[2].t_ind = 0;
-	face_indexes.push_back(t);
-
-	t.v[0].ind = 4; t.v[1].ind = 3; t.v[2].ind = 7;
-	t.v[0].n_ind = 1; t.v[1].n_ind = 1; t.v[2].n_ind = 1;
-	t.v[0].t_ind = 3; t.v[1].t_ind = 0; t.v[2].t_ind = 1;
-	face_indexes.push_back(t);
-
-	t.v[0].ind = 5; t.v[1].ind = 4; t.v[2].ind = 7;
-	t.v[0].n_ind = 2; t.v[1].n_ind = 2; t.v[2].n_ind = 2;
-	t.v[0].t_ind = 0; t.v[1].t_ind = 1; t.v[2].t_ind = 3;
-	face_indexes.push_back(t);
-
-	t.v[0].ind = 5; t.v[1].ind = 7; t.v[2].ind = 6;
-	t.v[0].n_ind = 0; t.v[1].n_ind = 3; t.v[2].n_ind = 2;
-	t.v[0].t_ind = 0; t.v[1].t_ind = 3; t.v[2].t_ind = 2;
-	face_indexes.push_back(t);
-
-	t.v[0].ind = 1; t.v[1].ind = 5; t.v[2].ind = 6;
-	t.v[0].n_ind = 3; t.v[1].n_ind = 3; t.v[2].n_ind = 3;
-	t.v[0].t_ind = 3; t.v[1].t_ind = 2; t.v[2].t_ind = 0;
-	face_indexes.push_back(t);
-
-	t.v[0].ind = 1; t.v[1].ind = 6; t.v[2].ind = 2;
-	t.v[0].n_ind = 3; t.v[1].n_ind = 3; t.v[2].n_ind = 3;
-	t.v[0].t_ind = 3; t.v[1].t_ind = 0; t.v[2].t_ind = 1;
-	face_indexes.push_back(t);
-
-	t.v[0].ind = 4; t.v[1].ind = 5; t.v[2].ind = 1;
-	t.v[0].n_ind = 4; t.v[1].n_ind = 4; t.v[2].n_ind = 4;
-	t.v[0].t_ind = 3; t.v[1].t_ind = 2; t.v[2].t_ind = 0;
-	face_indexes.push_back(t);
-
-	t.v[0].ind = 4; t.v[1].ind = 1; t.v[2].ind = 0;
-	t.v[0].n_ind = 4; t.v[1].n_ind = 4; t.v[2].n_ind = 4;
-	t.v[0].t_ind = 3; t.v[1].t_ind = 0; t.v[2].t_ind = 1;
-	face_indexes.push_back(t);
-
-	t.v[0].ind = 2; t.v[1].ind = 6; t.v[2].ind = 7;
-	t.v[0].n_ind = 5; t.v[1].n_ind = 5; t.v[2].n_ind = 5;
-	t.v[0].t_ind = 2; t.v[1].t_ind = 0; t.v[2].t_ind = 1;
-	face_indexes.push_back(t);
-
-	t.v[0].ind = 2; t.v[1].ind = 7; t.v[2].ind = 3;
-	t.v[0].n_ind = 5; t.v[1].n_ind = 5; t.v[2].n_ind = 5;
-	t.v[0].t_ind = 2; t.v[1].t_ind = 1; t.v[2].t_ind = 3;
-	face_indexes.push_back(t);
-}
-
-void Mesh::readVertexes(std::ifstream& f)
+void Mesh::readVertexes()
 {
 	point3D v;
-	f >> v.x >> v.y >> v.z;
+	file >> v.x >> v.y >> v.z;
 	vertexes.push_back(v);
 }
 
-void Mesh::readTextureCoords(std::ifstream& f)
+void Mesh::readTextureCoords()
 {
 	point2D vt;
-	f >> vt.x >> vt.y;
+	file >> vt.x >> vt.y;
 	vt.y = 1. - vt.y; // WHY????????????????????
 	texture_coords.push_back(vt);
 }
 
-void Mesh::readNormals(std::ifstream& f)
+void Mesh::readNormals()
 {
 	point3D vn;
-	f >> vn.x >> vn.y >> vn.z;
+	file >> vn.x >> vn.y >> vn.z;
 	normals.push_back(vn);
 }
 
-void Mesh::readFaceIndexes(std::ifstream& f)
+void Mesh::readFaceIndexes()
 {
 	triangle_indexes t;
 	std::string s;
 	for (int i = 0; i < 3; i++)
 	{
-		f >> s;
+		file >> s;
 		std::istringstream ss(s);
 		char thrash;
 		int ind, n_ind, t_ind;

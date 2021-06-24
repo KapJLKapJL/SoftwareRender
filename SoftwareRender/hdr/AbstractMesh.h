@@ -1,6 +1,8 @@
 #ifndef ABSTRCT_MESH_H
 #define ABSTRCT_MESH_H
 
+#include <vector>
+
 #include "MyMath.h"
 
 class abstrctMesh

@@ -145,6 +145,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\CubeMesh.cpp" />
     <ClCompile Include="src\Ddraw.cpp" />
     <ClCompile Include="src\Entity.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -154,7 +155,9 @@
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="hdr\AbstractMesh.h" />
     <ClInclude Include="hdr\AbstractShader.h" />
+    <ClInclude Include="hdr\CubeMesh.h" />
     <ClInclude Include="hdr\Ddraw.h" />
     <ClInclude Include="hdr\Entity.h" />
     <ClInclude Include="hdr\Mesh.h" />

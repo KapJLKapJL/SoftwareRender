@@ -6,6 +6,7 @@
 #include "../hdr/Entity.h"
 #include "../hdr/MyMath.h"
 #include "../hdr/AbstractShader.h"
+#include "../hdr/CubeMesh.h"
 
 
 class MicroShader : public abstrctShader
@@ -37,7 +38,7 @@ int main() {
 	Texture texture("banana\\textures\\Banana_BaseColor.png");
 	
 	Mesh mesh("banana\\source\\Banana.obj");
-	Mesh cube("");
+	CubeMesh cube;
 
 	Entity entity;
 	entity.setMesh(&mesh);
