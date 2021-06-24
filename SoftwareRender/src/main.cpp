@@ -41,12 +41,11 @@ int main() {
 	Entity entity;
 	entity.setMesh(&mesh);
 	entity.setDiffuseMap(&texture);
-	entity.setPosition({0., 0., 150.});
+	entity.setPosition({0., 0., 100.});
 
 	MicroShader shader;
 
 	DDraw ddraw;
-
 
 	if (!ddraw.create())
 		return -1;
@@ -64,7 +63,6 @@ int main() {
 		ddraw.clear();
 		ddraw.draw(&entity, &shader);
 	}
-	
 
 	return 0;
 }

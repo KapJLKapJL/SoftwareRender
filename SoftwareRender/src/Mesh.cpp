@@ -55,57 +55,114 @@ face Mesh::getFace(unsigned int face_number)
 
 void Mesh::makeCube()
 {
-	// Vertexes of cube
+	// Vertexes
 	point3D v;
-	v = { 1, 1, 1 };
+	v = { 1, 1, 1 };//0
 	vertexes.push_back(v);
-	v = { -1, 1, 1 };
+	v = { -1, 1, 1 };//1
 	vertexes.push_back(v);
-	v = { -1, -1, 1 };
+	v = { -1, -1, 1 };//2
 	vertexes.push_back(v);
-	v = { 1, -1, 1 };
+	v = { 1, -1, 1 };//3
 	vertexes.push_back(v);
-	v = { 1, 1, -1 };
+	v = { 1, 1, -1 };//4
 	vertexes.push_back(v);
-	v = { -1, 1, -1 };
+	v = { -1, 1, -1 };//5
 	vertexes.push_back(v);
-	v = { -1, -1, -1 };
+	v = { -1, -1, -1 };//6
 	vertexes.push_back(v);
-	v = { 1, -1, -1 };
+	v = { 1, -1, -1 };//7
 	vertexes.push_back(v);
 
-	// Triangles of cube
+	// Normals
+	point3D n;
+	n = { 0, 0, 1 };
+	normals.push_back(n);
+	n = { 1, 0, 0 };
+	normals.push_back(n);
+	n = { 0, 0, -1 };
+	normals.push_back(n);
+	n = { -1, 0, 0 };
+	normals.push_back(n);
+	n = { 0, 1, 0 };
+	normals.push_back(n);
+	n = { 0, -1, 0 };
+	normals.push_back(n);
+
+	// Texture coords
+	point2D uv;
+	uv = { 0, 0 };
+	texture_coords.push_back(uv);
+	uv = { 1, 0 };
+	texture_coords.push_back(uv);
+	uv = { 0, 1 };
+	texture_coords.push_back(uv);
+	uv = { 1, 1 };
+	texture_coords.push_back(uv);
+
+
+	// Triangles
 	triangle_indexes t;
-	t.v[0].n_ind = 0; t.v[1].n_ind = 0; t.v[2].n_ind = 0;
-	t.v[0].t_ind = 0; t.v[1].t_ind = 0; t.v[2].t_ind = 0;
+
 	t.v[0].ind = 0; t.v[1].ind = 1; t.v[2].ind = 2;
-	face_indexes.push_back(t);
-	t.v[0].ind = 0; t.v[1].ind = 2; t.v[2].ind = 3;
-	face_indexes.push_back(t);
-	t.v[0].ind = 4; t.v[1].ind = 0; t.v[2].ind = 3;
-	face_indexes.push_back(t);
-	t.v[0].ind = 4; t.v[1].ind = 3; t.v[2].ind = 7;
-	face_indexes.push_back(t);
-	t.v[0].ind = 5; t.v[1].ind = 4; t.v[2].ind = 7;
-	face_indexes.push_back(t);
-	t.v[0].ind = 5; t.v[1].ind = 7; t.v[2].ind = 6;
-	face_indexes.push_back(t);
-	t.v[0].ind = 1; t.v[1].ind = 5; t.v[2].ind = 6;
-	face_indexes.push_back(t);
-	t.v[0].ind = 1; t.v[1].ind = 6; t.v[2].ind = 2;
-	face_indexes.push_back(t);
-	t.v[0].ind = 4; t.v[1].ind = 5; t.v[2].ind = 1;
-	face_indexes.push_back(t);
-	t.v[0].ind = 4; t.v[1].ind = 1; t.v[2].ind = 0;
-	face_indexes.push_back(t);
-	t.v[0].ind = 2; t.v[1].ind = 6; t.v[2].ind = 7;
-	face_indexes.push_back(t);
-	t.v[0].ind = 2; t.v[1].ind = 7; t.v[2].ind = 3;
+	t.v[0].n_ind = 0; t.v[1].n_ind = 0; t.v[2].n_ind = 0;
+	t.v[0].t_ind = 3; t.v[1].t_ind = 2; t.v[2].t_ind = 0;
 	face_indexes.push_back(t);
 
-	//
-	texture_coords.push_back({ 0., 0. });
-	normals.push_back({0., 0., 0.});
+	t.v[0].ind = 0; t.v[1].ind = 2; t.v[2].ind = 3;
+	t.v[0].n_ind = 0; t.v[1].n_ind = 0; t.v[2].n_ind = 0;
+	t.v[0].t_ind = 3; t.v[1].t_ind = 0; t.v[2].t_ind = 1;
+	face_indexes.push_back(t);
+
+	t.v[0].ind = 4; t.v[1].ind = 0; t.v[2].ind = 3;
+	t.v[0].n_ind = 1; t.v[1].n_ind = 1; t.v[2].n_ind = 1;
+	t.v[0].t_ind = 3; t.v[1].t_ind = 2; t.v[2].t_ind = 0;
+	face_indexes.push_back(t);
+
+	t.v[0].ind = 4; t.v[1].ind = 3; t.v[2].ind = 7;
+	t.v[0].n_ind = 1; t.v[1].n_ind = 1; t.v[2].n_ind = 1;
+	t.v[0].t_ind = 3; t.v[1].t_ind = 0; t.v[2].t_ind = 1;
+	face_indexes.push_back(t);
+
+	t.v[0].ind = 5; t.v[1].ind = 4; t.v[2].ind = 7;
+	t.v[0].n_ind = 2; t.v[1].n_ind = 2; t.v[2].n_ind = 2;
+	t.v[0].t_ind = 0; t.v[1].t_ind = 1; t.v[2].t_ind = 3;
+	face_indexes.push_back(t);
+
+	t.v[0].ind = 5; t.v[1].ind = 7; t.v[2].ind = 6;
+	t.v[0].n_ind = 0; t.v[1].n_ind = 3; t.v[2].n_ind = 2;
+	t.v[0].t_ind = 0; t.v[1].t_ind = 3; t.v[2].t_ind = 2;
+	face_indexes.push_back(t);
+
+	t.v[0].ind = 1; t.v[1].ind = 5; t.v[2].ind = 6;
+	t.v[0].n_ind = 3; t.v[1].n_ind = 3; t.v[2].n_ind = 3;
+	t.v[0].t_ind = 3; t.v[1].t_ind = 2; t.v[2].t_ind = 0;
+	face_indexes.push_back(t);
+
+	t.v[0].ind = 1; t.v[1].ind = 6; t.v[2].ind = 2;
+	t.v[0].n_ind = 3; t.v[1].n_ind = 3; t.v[2].n_ind = 3;
+	t.v[0].t_ind = 3; t.v[1].t_ind = 0; t.v[2].t_ind = 1;
+	face_indexes.push_back(t);
+
+	t.v[0].ind = 4; t.v[1].ind = 5; t.v[2].ind = 1;
+	t.v[0].n_ind = 4; t.v[1].n_ind = 4; t.v[2].n_ind = 4;
+	t.v[0].t_ind = 3; t.v[1].t_ind = 2; t.v[2].t_ind = 0;
+	face_indexes.push_back(t);
+
+	t.v[0].ind = 4; t.v[1].ind = 1; t.v[2].ind = 0;
+	t.v[0].n_ind = 4; t.v[1].n_ind = 4; t.v[2].n_ind = 4;
+	t.v[0].t_ind = 3; t.v[1].t_ind = 0; t.v[2].t_ind = 1;
+	face_indexes.push_back(t);
+
+	t.v[0].ind = 2; t.v[1].ind = 6; t.v[2].ind = 7;
+	t.v[0].n_ind = 5; t.v[1].n_ind = 5; t.v[2].n_ind = 5;
+	t.v[0].t_ind = 2; t.v[1].t_ind = 0; t.v[2].t_ind = 1;
+	face_indexes.push_back(t);
+
+	t.v[0].ind = 2; t.v[1].ind = 7; t.v[2].ind = 3;
+	t.v[0].n_ind = 5; t.v[1].n_ind = 5; t.v[2].n_ind = 5;
+	t.v[0].t_ind = 2; t.v[1].t_ind = 1; t.v[2].t_ind = 3;
+	face_indexes.push_back(t);
 }
 
 void Mesh::readVertexes(std::ifstream& f)
@@ -119,6 +176,7 @@ void Mesh::readTextureCoords(std::ifstream& f)
 {
 	point2D vt;
 	f >> vt.x >> vt.y;
+	vt.y = 1. - vt.y; // WHY????????????????????
 	texture_coords.push_back(vt);
 }
 

@@ -22,11 +22,11 @@ bool isBackFace(const point3D& a, const point3D& b, const point3D& c)
 
 point3D barycentric(const point2D& a, const point2D& b, const point2D& c, const point2D& p)
 {
-	point3D uv = cross({c.x - a.x, b.x - a.x, a.x - p.x}, { c.y - a.y, b.y - a.y, a.y - p.y });
+	point3D uv = cross({b.x - a.x, c.x - a.x, a.x - p.x}, { b.y - a.y, c.y - a.y, a.y - p.y });
 
 	double u = uv.x / uv.z;
 	double v = uv.y / uv.z;
 
 	// Почему в таком порядке?
-	return {1.-u-v, v, u};
+	return {1.-u-v, u, v};
 }
