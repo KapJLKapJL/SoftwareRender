@@ -158,7 +158,7 @@ struct Triangle2D
 
 
 //////////// FOR RENDER ////////////
-bool isBackFace(const vector<4>& a, const vector<4>& b, const vector<4>& c);
+bool isBackFace(const point3D& a, const point3D& b, const point3D& c);
 point3D barycentric(const point2D &a, const point2D &b, const point2D& c, const point2D& p);
 ////////////////////////////////////
 

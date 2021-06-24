@@ -1,14 +1,15 @@
 #ifndef MY_DDRAW_H
 #define MY DDRAW_H
 
-#include "Window.h"
-#include "Entity.h"
-#include "MyMath.h"
-
 #define INITGUID
 #include <ddraw.h>
 
 #include <iostream>
+
+#include "Window.h"
+#include "Entity.h"
+#include "MyMath.h"
+#include "AbstractShader.h"
 
 class DDraw
 {
@@ -20,11 +21,11 @@ public:
 	Window* getWindow() { return &window; }
 
 	bool create();
-	bool draw(Entity *entity);
+	bool draw(Entity *entity, abstrctShader *shader);
 	bool clear();
 
 	void rasterize(Triangle2D t, DDSURFACEDESC2& desc, Texture *texture);
-	void barRastrize(matrix<3, 2> p, DDSURFACEDESC2& desc);
+	void barRastrize(matrix<3, 2> p, Texture* texture, DDSURFACEDESC2& desc, abstrctShader* shader);
 
 private:
 	static DDraw*	ddraw_instance;

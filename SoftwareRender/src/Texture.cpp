@@ -15,7 +15,7 @@ Texture::~Texture()
 	stbi_image_free(bits);
 }
 
-color Texture::getPixel(const double u, const double v)
+color Texture::getPixel(const double &u, const double &v)
 {
 	int x = int(u * width) % width;
 	int y = int(v * height) % height;

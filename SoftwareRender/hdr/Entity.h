@@ -18,11 +18,21 @@ public:
 
 	face getFace();
 	bool eof();
+
+	void setPosition(const point3D &t);
+	void setRotationX(const double &angle);
+
+	matrix<4, 4> getModelMatrix() { return model; };
 private:
 	Texture* diffuse_map{nullptr};
 
 	Mesh* mesh{nullptr};
 	unsigned int face_count{0};
+
+	matrix<4, 4> model{ {1., 0., 0., 0.,
+		                 0., 1., 0., 0.,
+		                 0., 0., 1., 0.,
+		                 0., 0., 0., 1.} };
 };
 
 #endif // !ENTITY_H

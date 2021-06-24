@@ -75,8 +75,16 @@ bool DDraw::create()
 	return true;
 }
 
-bool DDraw::draw(Entity* entity)
+bool DDraw::draw(Entity* entity, abstrctShader* shader)
 {
+	shader->setWorldMatrix(entity->getModelMatrix());
+
+	matrix<3, 4> projection{ {1., 0., 0., 0.,
+							  0., 1., 0., 0.,
+							  0., 0., 1., 0.} };
+
+	shader->setProjectionMatrix(projection);
+
 	// Рисую на поверхности
 	DDSURFACEDESC2 srfc_desc;
 	CLEANING_STRUCT(srfc_desc);
@@ -89,62 +97,29 @@ bool DDraw::draw(Entity* entity)
 		return false;
 	}
 
-
-	Triangle2D t{ {400.12539, 100.1351345}, {400.125154,500.12514}, {10., 10.} };
-
-	
-	static double angle;
-	angle += 0.0275125;
-	double angle_sin = sin(angle);
-	double angle_cos = cos(angle);
-
-	
-	matrix<4, 4> to_world{ {1.,        0.,         0., 0.,
-						    0., angle_cos, -angle_sin, 0.,
-						    0., angle_sin,  angle_cos, 150.,
-		                    0.,        0.,         0., 1.} };
-	
-
-	/*
-	matrix<4, 4> to_world{ {1.,        0.,         0., 0.,
-							0.,        1.,         0., 0.,
-							0.,        0.,         1., 100.,
-							0.,        0.,         0., 1.} };
-	*/
-
-	matrix<3, 4> projection{ {1., 0., 0., 0.,
-		                      0., 1., 0., 0.,
-		                      0., 0., 1., 0.} };
-
 	//matrix<3, 3> viewport{ {} };
 
 	while (!entity->eof())
 	{
 		auto f = entity->getFace();
-		// Вершинный шейдер
-		vector<4> v[3];
+
+		point3D v[3];
 		for (int i = 0; i < 3; i++)
 		{
-			v[i] = { f.v[i].coord.x, f.v[i].coord.y, f.v[i].coord.z, 1. };
-			v[i] = to_world * v[i];
+			v[i] = shader->vertex(f, i);
 		}
 
 		if (isBackFace(v[0], v[1], v[2]))
 			continue;
 
-		// Пиксельный шейдер
 		point2D p[3];
 		for (int i = 0; i < 3; i++)
 		{
-			auto proj = projection * v[i];
-			// viewport
-			p[i].x = 400 + proj[0] * 200 / proj[2];
-			p[i].y = 300 - proj[1] * 200 / proj[2];
+			p[i].x = 400 + v[i].x * 200 / v[i].z;
+			p[i].y = 300 - v[i].y * 200 / v[i].z;
 		}
 
-		t = { p[0], p[1], p[2] };
-		//rasterize(t, srfc_desc, entity->getDiffuseMap());
-		barRastrize({ p[0], p[1], p[2] }, srfc_desc);
+		barRastrize({ p[0], p[1], p[2] }, entity->getDiffuseMap(), srfc_desc, shader);
 	}
 
 	if (FAILED(i_back_buffer->Unlock(NULL)))
@@ -250,15 +225,20 @@ void DDraw::rasterize(Triangle2D t, DDSURFACEDESC2 &desc, Texture* texture)
 	scanLine((int)t.b.y, (int)t.c.y);
 }
 
-void DDraw::barRastrize(matrix<3, 2> p, DDSURFACEDESC2& desc)
+void DDraw::barRastrize(matrix<3, 2> p, Texture* texture, DDSURFACEDESC2& desc, abstrctShader *shader)
 {      
 	// (A<B<C) .y
+	/*
 	if (p[0][1] > p[1][1]) std::swap(p[0], p[1]);
 	if (p[0][1] > p[2][1]) std::swap(p[0], p[2]);
 	if (p[1][1] > p[2][1]) std::swap(p[1], p[2]);
+	*/
 
-	int top = p[0][1] > 0.01   ? (int)p[0][1] : 0;
-	int bot = p[2][1] < 598.99 ? (int)p[2][1] : 599;
+	int top = (int) min(p[0][1], min(p[1][1], p[2][1]));;
+	int bot = (int) max(p[0][1], max(p[1][1], p[2][1]));;
+
+	top = max(top, 0);
+	bot = min(bot, 599);
 	if (top > bot)
 		return;
 
@@ -268,13 +248,13 @@ void DDraw::barRastrize(matrix<3, 2> p, DDSURFACEDESC2& desc)
 	left  = max(left, 0);
 	right = min(right, 799);
 
+
 	if (left > right)
 		return;
 
 
 	int mempitch = (int)(desc.lPitch >> 2);
 	UINT* video_buffer = (UINT*)desc.lpSurface;
-	UINT color = 0xFF + rand() % 0xFFFFFF;
 	for (int y = top; y <= bot; y++)
 	{
 		int y_mempitch = y * mempitch;
@@ -283,7 +263,7 @@ void DDraw::barRastrize(matrix<3, 2> p, DDSURFACEDESC2& desc)
 			auto bar_screen = barycentric(p[0], p[1], p[2], { (double)x, (double)y });
 			if (bar_screen.x < 0. || bar_screen.y < 0. || bar_screen.z < 0.)
 				continue;
-			video_buffer[x + y_mempitch] = color;
+			video_buffer[x + y_mempitch] = shader->pixel(bar_screen, texture).ARGB; // Ужас
 		}
 	}
 }
