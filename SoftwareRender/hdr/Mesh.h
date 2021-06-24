@@ -1,10 +1,10 @@
 #ifndef MESH_H
 #define MESH_H
 
-#include "MyMath.h"
-
 #include <vector>
 #include <fstream>
+
+#include "MyMath.h"
 
 class Mesh
 {

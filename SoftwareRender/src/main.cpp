@@ -11,6 +11,7 @@
 class MicroShader : public abstrctShader
 {
 public:
+	virtual ~MicroShader() {};
 
 	point3D vertex(const face& f, const int& idx) override
 	{
