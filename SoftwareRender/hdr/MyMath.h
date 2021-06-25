@@ -1,6 +1,8 @@
 #ifndef MY_MATH_H
 #define MY_MATH_H
 
+#include <cmath>
+
 /////////////////////////////////////
 #pragma pack(push, 1)
 union color
@@ -35,6 +37,14 @@ template<unsigned int n> struct vector
 		if (i >= n) throw("Out of range!");
 		return data[i];
 	}
+	double length() const
+	{
+		return std::sqrt(dot(*this, *this));
+	}
+	vector<n> normalize() const
+	{
+		return (*this) / length();
+	}
 };
 
 template<unsigned int n> double dot(const vector<n> &v1, const vector<n> &v2)
@@ -51,6 +61,14 @@ template<unsigned int n> vector<n> operator-(const vector<n>& v1, const vector<n
 	vector<n> ret;
 	for (int i = 0; i < n; i++)
 		ret[i] = v1[i] - v2[i];
+	return ret;
+}
+
+template<unsigned int n> vector<n> operator/(const vector<n> &v, const double &d)
+{
+	vector<n> ret;
+	for (int i = 0; i < n; i++)
+		ret[i] = v[i] / d;
 	return ret;
 }
 
@@ -120,6 +138,14 @@ template<> struct vector<3>
 		if (i >= 3) throw("Out of range!");
 		return i == 0 ? x : (i == 1 ? y : z);
 	}
+	double length() const
+	{
+		return std::sqrt(dot(*this, *this));
+	}
+	vector<3> normalize() const
+	{
+		return (*this) / length();
+	}
 };
 typedef vector<3> point3D;
 
@@ -136,6 +162,14 @@ template<> struct vector<2>
 	{
 		if (i >= 2) throw("Out of range!");
 		return i == 0 ? x : y;
+	}
+	double length() const
+	{
+		return std::sqrt(dot(*this, *this));
+	}
+	vector<2> normalize() const
+	{
+		return (*this) / length();
 	}
 };
 typedef vector<2> point2D;
