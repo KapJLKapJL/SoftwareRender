@@ -95,7 +95,7 @@ void CubeMesh::readFaceIndexes()
 	face_indexes.push_back(t);
 
 	t.v[0].ind = 5; t.v[1].ind = 7; t.v[2].ind = 6;
-	t.v[0].n_ind = 0; t.v[1].n_ind = 3; t.v[2].n_ind = 2;
+	t.v[0].n_ind = 2; t.v[1].n_ind = 2; t.v[2].n_ind = 2;
 	t.v[0].t_ind = 0; t.v[1].t_ind = 3; t.v[2].t_ind = 2;
 	face_indexes.push_back(t);
 

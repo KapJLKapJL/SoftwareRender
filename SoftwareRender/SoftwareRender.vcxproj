@@ -161,6 +161,7 @@
     <ClInclude Include="hdr\Ddraw.h" />
     <ClInclude Include="hdr\Entity.h" />
     <ClInclude Include="hdr\FlatShader.h" />
+    <ClInclude Include="hdr\GouraudShader.h" />
     <ClInclude Include="hdr\Mesh.h" />
     <ClInclude Include="hdr\MyMath.h" />
     <ClInclude Include="hdr\Texture.h" />

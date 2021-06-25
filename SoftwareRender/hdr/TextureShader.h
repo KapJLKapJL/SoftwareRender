@@ -23,7 +23,7 @@ public:
 		point2D uv = text_coord * bar;
 		return t->getPixel(uv.x, uv.y);
 	};
-private:
+protected:
 	matrix<2, 3> text_coord;
 };
 

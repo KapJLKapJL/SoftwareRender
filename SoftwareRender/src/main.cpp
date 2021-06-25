@@ -9,8 +9,9 @@
 #include "../hdr/CubeMesh.h"
 #include "../hdr/TextureShader.h"
 #include "../hdr/FlatShader.h"
+#include "../hdr/GouraudShader.h"
 
-const point3D directional_light{0.5, 0.3, -0.5};
+const point3D directional_light{0.5, 0.3, -1};
 
 int main() {
 	Texture texture("banana\\textures\\Banana_BaseColor.png");
@@ -23,7 +24,7 @@ int main() {
 	entity.setDiffuseMap(&texture);
 	//entity.setPosition({0., 0., 100.});
 
-	FlatShader shader;
+	GouraudShader shader;
 
 
 	DDraw ddraw;

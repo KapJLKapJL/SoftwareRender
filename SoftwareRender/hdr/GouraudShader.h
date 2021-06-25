@@ -1,36 +1,38 @@
-#ifndef FLAT_SHADER_H
-#define FLAT_SHADER_H
+#ifndef GOURAUD_SHADER_H
+#define GOURAUD_SHADER_H
 
 #include "AbstractShader.h"
-#include "Texture.h"
 
 extern const point3D directional_light;
 
-class FlatShader : public abstrctShader
+
+class GouraudShader : public abstrctShader
 {
 public:
-	virtual ~FlatShader() {};
+	virtual ~GouraudShader() {};
 
 	point3D vertex(const face& f, const int& idx) override
 	{
 		text_coord[0][idx] = f.v[idx].vt.x;
 		text_coord[1][idx] = f.v[idx].vt.y;
 
-		vector<4> v = { f.v[idx].coord.x, f.v[idx].coord.y, f.v[idx].coord.z, 1. };
-		vert[idx] = projection * (to_world * v);
-		if (idx == 2)
-		{
-			auto AB = vert[1] - vert[0];
-			auto AC = vert[2] - vert[0];
+		vector<4> n4 = { f.v[idx].vn.x, f.v[idx].vn.y, f.v[idx].vn.z, 0. };
+		vector<3> n = projection * (to_world * n4);
 
-			auto normal = cross({ AB[0], AB[1], AB[2] }, { AC[0], AC[1], AC[2] });
-			intensity = dot(normal.normalize(), directional_light.normalize());
-		}
-		return vert[idx];
+		normals[0][idx] = n.x;
+		normals[1][idx] = n.y;
+		normals[2][idx] = n.z;
+
+		vector<4> v = { f.v[idx].coord.x, f.v[idx].coord.y, f.v[idx].coord.z, 1. };
+		return projection * (to_world * v);
 	};
 
 	color pixel(const point3D& bar, Texture* t) override
 	{
+		auto n = normals * bar;
+
+		double intensity = dot(n.normalize(), directional_light.normalize());
+
 		color c;
 		if (intensity < 0.)
 		{
@@ -38,22 +40,19 @@ public:
 		}
 		else
 		{
-			auto uv = text_coord * bar;
-
+			point2D uv = text_coord * bar;
 			c = t->getPixel(uv.x, uv.y);
-			c.B *= intensity;
 			c.R *= intensity;
 			c.G *= intensity;
+			c.B *= intensity;
 		}
 
 		return c;
 	};
-
 protected:
 	matrix<2, 3> text_coord;
-	matrix<3, 3> vert;
-	double intensity{ 0. };
+	matrix<3, 3> normals;
 };
 
-#endif // !FLAT_SHADER_H
+#endif // !GOURAUD_SHADER_H
 
