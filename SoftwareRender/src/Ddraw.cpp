@@ -112,23 +112,19 @@ bool DDraw::draw(Entity* entity, abstrctShader* shader)
 		if (isBackFace(v[0], v[1], v[2]))
 			continue;
 
-		point2D p[3];
+		matrix<3, 2> p;
 		for (int i = 0; i < 3; i++)
 		{
 			p[i].x = 400 + v[i].x * 200 / v[i].z;
 			p[i].y = 300 - v[i].y * 200 / v[i].z;
 		}
 
-		barRastrize({ p[0], p[1], p[2] }, entity->getDiffuseMap(), srfc_desc, shader);
+		barRastrize(p, entity->getDiffuseMap(), srfc_desc, shader);
+		//rasterize(p, entity->getDiffuseMap(), srfc_desc, shader);
 	}
 
 	if (FAILED(i_back_buffer->Unlock(NULL)))
 		return false;
-
-	// Флип
-	if (FAILED(i_primary_surface->Flip(NULL, DDFLIP_WAIT))) {
-		return false;
-	}
 
 	Sleep(55);
 
@@ -153,23 +149,32 @@ bool DDraw::clear()
 	return true;
 }
 
+bool DDraw::display()
+{
+	if (FAILED(i_primary_surface->Flip(NULL, DDFLIP_WAIT))) {
+		return false;
+	}
 
-void DDraw::rasterize(Triangle2D t, DDSURFACEDESC2 &desc, Texture* texture)
+	return true;
+}
+
+
+void DDraw::rasterize(matrix<3, 2> &p, Texture* texture, const DDSURFACEDESC2& desc, abstrctShader* shader)
 {
 	// Сортировка по возрастанию Y (A<B<C)
-	if (t.a.y > t.b.y) std::swap(t.a, t.b);
-	if (t.a.y > t.c.y) std::swap(t.a, t.c);
-	if (t.b.y > t.c.y) std::swap(t.b, t.c);
+	if (p[0][1] > p[1][1]) std::swap(p[0], p[1]);
+	if (p[0][1] > p[2][1]) std::swap(p[0], p[2]);
+	if (p[1][1] > p[2][1]) std::swap(p[1], p[2]);
 
 	// Коэффициент приращения Х относительно У для каждой каждой прямой
-	double kCA = (t.c.x - t.a.x) / (t.c.y - t.a.y);
-	double kBA = (t.b.x - t.a.x) / (t.b.y - t.a.y);
-	double kCB = (t.c.x - t.b.x) / (t.c.y - t.b.y);
+	double kCA = (p[2][0] - p[0][0]) / (p[2][1] - p[0][1]);
+	double kBA = (p[1][0] - p[0][0]) / (p[1][1] - p[0][1]);
+	double kCB = (p[2][0] - p[1][0]) / (p[2][1] - p[1][1]);
 
 	// Лежит ли точка B правее прямой AC? (относительно зрителя)
-	double xAC = kCA * (t.b.y - t.a.y) + t.a.x; // Тут была ошибка. Вспомнить откуда взялось это выражение!!!
+	double xAC = kCA * (p[1][1] - p[0][1]) + p[0][0]; // Тут была ошибка. Вспомнить откуда взялось это выражение!!!
 	double k_left, k_right;
-	if (t.b.x > xAC)
+	if (p[1][0] > xAC)
 	{
 		k_left = kCA;
 		k_right = kBA;
@@ -179,8 +184,8 @@ void DDraw::rasterize(Triangle2D t, DDSURFACEDESC2 &desc, Texture* texture)
 		k_left = kBA;
 		k_right = kCA;
 	}
-	double x_left = t.a.x;
-	double x_right = t.a.x;
+	double x_left = p[0][0];
+	double x_right = p[0][0];
 
 
 	int mempitch = (int)(desc.lPitch >> 2);
@@ -189,14 +194,17 @@ void DDraw::rasterize(Triangle2D t, DDSURFACEDESC2 &desc, Texture* texture)
 	{
 		int x_l;
 		int x_r;
-		for (int y = y_top; y < y_bot; y++)
+		for (int y = y_top; y <= y_bot; y++)
 		{
 			x_l = (int)x_left;
 			x_r = (int)x_right;
 			int y_mempitch = y * mempitch;
-			for (int x = x_l; x < x_r; x++)
+			for (int x = x_l; x <= x_r; x++)
 			{
-				video_buffer[x + y_mempitch] = 0xFFFF0000;
+				auto bar_screen = barycentric(p[0], p[1], p[2], { (double)x, (double)y });
+				if (bar_screen.x < 0. || bar_screen.y < 0. || bar_screen.z < 0.)
+					continue;
+				video_buffer[x + y_mempitch] = shader->pixel(bar_screen, texture).ARGB;
 			}
 			x_left += k_left;
 			x_right += k_right;
@@ -204,28 +212,28 @@ void DDraw::rasterize(Triangle2D t, DDSURFACEDESC2 &desc, Texture* texture)
 	};
 
 	// Закраска верхнего треугольника
-	scanLine((int) t.a.y, (int)t.b.y);
+	scanLine((int)p[0][1], (int)p[1][1]);
 
-	if (t.b.x > xAC)
+	if (p[1][0] > xAC)
 	{
 		k_left = kCA;
 		k_right = kCB;
 		x_left = x_left;
-		x_right = t.b.x;
+		x_right = p[1][0];
 	}
 	else
 	{
 		k_left = kCB;
 		k_right = kCA;
-		x_left = t.b.x;
+		x_left = p[1][0];
 		x_right = x_right;
 	}
 
 	// Закраска нижнего треугольника
-	scanLine((int)t.b.y, (int)t.c.y);
+	scanLine((int)p[1][1], (int)p[2][1]);
 }
 
-void DDraw::barRastrize(matrix<3, 2> p, Texture* texture, DDSURFACEDESC2& desc, abstrctShader *shader)
+void DDraw::barRastrize(const matrix<3, 2> &p, Texture* texture, const DDSURFACEDESC2& desc, abstrctShader *shader)
 {      
 	// (A<B<C) .y
 	/*

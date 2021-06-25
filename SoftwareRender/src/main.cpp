@@ -41,9 +41,9 @@ int main() {
 	CubeMesh cube;
 
 	Entity entity;
-	entity.setMesh(&mesh);
+	//entity.setMesh(&mesh);
 	entity.setDiffuseMap(&texture);
-	entity.setPosition({0., 0., 100.});
+	//entity.setPosition({0., 0., 100.});
 
 	MicroShader shader;
 
@@ -53,7 +53,7 @@ int main() {
 		return -1;
 
 	double angleX = 0.;
-	while (ddraw.getWindow()->run())
+	while (ddraw.isOpen())
 	{
 		if (ddraw.getWindow()->isExit())
 			break;
@@ -63,7 +63,16 @@ int main() {
 		entity.setRotationX(angleX);
 
 		ddraw.clear();
+
+		entity.setMesh(&mesh);
+		entity.setPosition({ 50., 0., 100. });
 		ddraw.draw(&entity, &shader);
+
+		entity.setMesh(&cube);
+		entity.setPosition({-3., -1., 5.});
+		ddraw.draw(&entity, &shader);
+
+		ddraw.display();
 	}
 
 	return 0;

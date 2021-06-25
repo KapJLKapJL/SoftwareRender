@@ -20,12 +20,15 @@ public:
 	static DDraw* get() { return ddraw_instance; }
 	Window* getWindow() { return &window; }
 
+	bool isOpen(){ return window.run(); }
+
 	bool create();
 	bool draw(Entity *entity, abstrctShader *shader);
 	bool clear();
+	bool display();
 
-	void rasterize(Triangle2D t, DDSURFACEDESC2& desc, Texture *texture);
-	void barRastrize(matrix<3, 2> p, Texture* texture, DDSURFACEDESC2& desc, abstrctShader* shader);
+	void rasterize(matrix<3, 2> &p, Texture* texture, const DDSURFACEDESC2& desc, abstrctShader* shader);
+	void barRastrize(const matrix<3, 2> &p, Texture* texture, const DDSURFACEDESC2& desc, abstrctShader* shader);
 
 private:
 	static DDraw*	ddraw_instance;

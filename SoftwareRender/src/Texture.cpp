@@ -22,10 +22,11 @@ color Texture::getPixel(const double &u, const double &v)
 
 	color p;
 
-	p.R = bits[(x + y * width) * 4 + 0];
-	p.G = bits[(x + y * width) * 4 + 1];
-	p.B = bits[(x + y * width) * 4 + 2];
-	p.A = bits[(x + y * width) * 4 + 3];
+	int pixel_count = (x + y * width) * 4;
+	p.R = bits[pixel_count + 0];
+	p.G = bits[pixel_count + 1];
+	p.B = bits[pixel_count + 2];
+	p.A = bits[pixel_count + 3];
 
 	return p;
 }
