@@ -75,7 +75,6 @@ bool DDraw::create()
 	}
 
 	z_buffer = new double[800 * 600];
-	ZeroMemory(z_buffer, 800 * 600);
 
 	return true;
 }
