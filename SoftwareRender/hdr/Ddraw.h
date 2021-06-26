@@ -28,7 +28,7 @@ public:
 	bool display();
 
 	void rasterize(matrix<3, 2> &p, Texture* texture, const DDSURFACEDESC2& desc, abstrctShader* shader);
-	void barRastrize(const matrix<3, 2> &p, Texture* texture, const DDSURFACEDESC2& desc, abstrctShader* shader);
+	void barRastrize(const matrix<3, 3> &v, Texture* texture, abstrctShader* shader);
 
 private:
 	static DDraw*	ddraw_instance;
@@ -38,6 +38,7 @@ private:
 	LPDIRECTDRAWSURFACE7	i_primary_surface;
 	LPDIRECTDRAWSURFACE7	i_back_buffer;
 
+	double* z_buffer;
 };
 
 #endif // !MY_DDRAW_H

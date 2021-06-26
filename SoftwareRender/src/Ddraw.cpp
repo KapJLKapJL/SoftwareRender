@@ -7,7 +7,7 @@
 
 DDraw* DDraw::ddraw_instance = nullptr;
 
-DDraw::DDraw() :i_ddraw(nullptr), i_primary_surface(nullptr), i_back_buffer(nullptr)
+DDraw::DDraw() :i_ddraw(nullptr), i_primary_surface(nullptr), i_back_buffer(nullptr), z_buffer(nullptr)
 {
 	if (!ddraw_instance)
 		ddraw_instance = this;
@@ -15,6 +15,8 @@ DDraw::DDraw() :i_ddraw(nullptr), i_primary_surface(nullptr), i_back_buffer(null
 
 DDraw::~DDraw()
 {
+	delete z_buffer;
+
 	INTRFC_RELEASE(i_back_buffer);
 	INTRFC_RELEASE(i_primary_surface);
 	INTRFC_RELEASE(i_ddraw);
@@ -72,6 +74,9 @@ bool DDraw::create()
 		return false;
 	}
 
+	z_buffer = new double[800 * 600];
+	ZeroMemory(z_buffer, 800 * 600);
+
 	return true;
 }
 
@@ -85,25 +90,11 @@ bool DDraw::draw(Entity* entity, abstrctShader* shader)
 
 	shader->setProjectionMatrix(projection);
 
-	// Рисую на поверхности
-	DDSURFACEDESC2 srfc_desc;
-	CLEANING_STRUCT(srfc_desc);
-	if (FAILED(i_back_buffer->Lock(
-		NULL,
-		&srfc_desc,
-		DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT,
-		NULL)))
-	{
-		return false;
-	}
-
-	//matrix<3, 3> viewport{ {} };
-
 	while (!entity->eof())
 	{
 		auto f = entity->getFace();
 
-		point3D v[3];
+		matrix<3,3> v;
 		for (int i = 0; i < 3; i++)
 		{
 			v[i] = shader->vertex(f, i);
@@ -112,21 +103,10 @@ bool DDraw::draw(Entity* entity, abstrctShader* shader)
 		if (isBackFace(v[0], v[1], v[2]))
 			continue;
 
-		matrix<3, 2> p;
-		for (int i = 0; i < 3; i++)
-		{
-			p[i].x = 400 + v[i].x * 200 / v[i].z;
-			p[i].y = 300 - v[i].y * 200 / v[i].z;
-		}
-
-		barRastrize(p, entity->getDiffuseMap(), srfc_desc, shader);
-		//rasterize(p, entity->getDiffuseMap(), srfc_desc, shader);
+		barRastrize(v, entity->getDiffuseMap(), shader);
 	}
 
-	if (FAILED(i_back_buffer->Unlock(NULL)))
-		return false;
-
-	Sleep(55);
+	//Sleep(55);
 
 	return true;
 }
@@ -143,9 +123,13 @@ bool DDraw::clear()
 			NULL, NULL, NULL,
 			DDBLT_COLORFILL | DDBLT_WAIT,
 			&desc)
-	)) {
+	))
+	{
 		return false;
 	}
+
+	ZeroMemory(z_buffer, 800 * 600 * 8);
+
 	return true;
 }
 
@@ -233,14 +217,14 @@ void DDraw::rasterize(matrix<3, 2> &p, Texture* texture, const DDSURFACEDESC2& d
 	scanLine((int)p[1][1], (int)p[2][1]);
 }
 
-void DDraw::barRastrize(const matrix<3, 2> &p, Texture* texture, const DDSURFACEDESC2& desc, abstrctShader *shader)
-{      
-	// (A<B<C) .y
-	/*
-	if (p[0][1] > p[1][1]) std::swap(p[0], p[1]);
-	if (p[0][1] > p[2][1]) std::swap(p[0], p[2]);
-	if (p[1][1] > p[2][1]) std::swap(p[1], p[2]);
-	*/
+void DDraw::barRastrize(const matrix<3, 3> &v, Texture* texture, abstrctShader *shader)
+{   
+	matrix<3, 2> p;
+	for (int i = 0; i < 3; i++)
+	{
+		p[i].x = 400 + v[i].x * 200 / v[i].z;
+		p[i].y = 300 - v[i].y * 200 / v[i].z;
+	}
 
 	int top = (int) min(p[0][1], min(p[1][1], p[2][1]));;
 	int bot = (int) max(p[0][1], max(p[1][1], p[2][1]));;
@@ -255,23 +239,48 @@ void DDraw::barRastrize(const matrix<3, 2> &p, Texture* texture, const DDSURFACE
 
 	left  = max(left, 0);
 	right = min(right, 799);
-
-
 	if (left > right)
 		return;
 
 
-	int mempitch = (int)(desc.lPitch >> 2);
-	UINT* video_buffer = (UINT*)desc.lpSurface;
+	DDSURFACEDESC2 srfc_desc;
+	CLEANING_STRUCT(srfc_desc);
+	if (FAILED(i_back_buffer->Lock(
+		NULL,
+		&srfc_desc,
+		DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT,
+		NULL)))
+	{
+		return;
+	}
+
+	int mempitch = (int)(srfc_desc.lPitch >> 2);
+	UINT* video_buffer = (UINT*)srfc_desc.lpSurface;
+
 	for (int y = top; y <= bot; y++)
 	{
 		int y_mempitch = y * mempitch;
+		int y_800 = y * 800;
 		for (int x = left; x <= right; x++)
 		{
 			auto bar_screen = barycentric(p[0], p[1], p[2], { (double)x, (double)y });
 			if (bar_screen.x < 0. || bar_screen.y < 0. || bar_screen.z < 0.)
 				continue;
-			video_buffer[x + y_mempitch] = shader->pixel(bar_screen, texture).ARGB; // Ужас
+
+			point3D bar_3D{ bar_screen.x / v[0].z, bar_screen.y / v[1].z, bar_screen.z / v[2].z };
+			bar_3D = bar_3D / (bar_3D.x + bar_3D.y + bar_3D.z);
+
+			double z = 1./dot({ v[0].z, v[1].z, v[2].z }, bar_3D);
+
+			if (z_buffer[x + y_800] > z)
+				continue;
+
+			video_buffer[x + y_mempitch] = shader->pixel(bar_3D, texture).ARGB; // Ужас
+			z_buffer[x + y_800] = z;
 		}
 	}
+
+	if (FAILED(i_back_buffer->Unlock(NULL)))
+		return;
+
 }
