@@ -141,7 +141,7 @@ bool DDraw::display()
 	return true;
 }
 
-
+/*
 void DDraw::rasterize(matrix<3, 2> &p, Texture* texture, const DDSURFACEDESC2& desc, abstrctShader* shader)
 {
 	// Сортировка по возрастанию Y (A<B<C)
@@ -214,7 +214,7 @@ void DDraw::rasterize(matrix<3, 2> &p, Texture* texture, const DDSURFACEDESC2& d
 
 	// Закраска нижнего треугольника
 	scanLine((int)p[1][1], (int)p[2][1]);
-}
+}*/
 
 void DDraw::barRastrize(const matrix<3, 3> &v, Texture* texture, abstrctShader *shader)
 {   
