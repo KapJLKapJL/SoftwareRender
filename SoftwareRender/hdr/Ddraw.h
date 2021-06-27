@@ -27,7 +27,6 @@ public:
 	bool clear();
 	bool display();
 
-	//void rasterize(matrix<3, 2> &p, Texture* texture, const DDSURFACEDESC2& desc, abstrctShader* shader);
 	void barRastrize(const matrix<3, 3> &v, Texture* texture, abstrctShader* shader);
 
 private:
