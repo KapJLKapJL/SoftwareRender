@@ -10,6 +10,7 @@
 #include "../hdr/TextureShader.h"
 #include "../hdr/FlatShader.h"
 #include "../hdr/GouraudShader.h"
+#include "../hdr/PhongShader.h"
 
 const point3D directional_light{0.5, 0.3, -1};
 
@@ -24,7 +25,7 @@ int main() {
 	entity.setDiffuseMap(&texture);
 	//entity.setPosition({0., 0., 100.});
 
-	GouraudShader shader;
+	PhongShader shader;
 
 
 	DDraw ddraw;

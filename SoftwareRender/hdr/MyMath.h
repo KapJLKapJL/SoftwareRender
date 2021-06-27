@@ -72,6 +72,22 @@ template<unsigned int n> vector<n> operator/(const vector<n> &v, const double &d
 	return ret;
 }
 
+template<unsigned int n> vector<n> operator*(const vector<n>& v, const double& d)
+{
+	vector<n> ret;
+	for (int i = 0; i < n; i++)
+		ret[i] = v[i] * d;
+	return ret;
+}
+
+template<unsigned int n> vector<n> operator*(const double& d, const vector<n>& v)
+{
+	vector<n> ret;
+	for (int i = 0; i < n; i++)
+		ret[i] = v[i] * d;
+	return ret;
+}
+
 
 template<unsigned int nrows, unsigned int ncols> struct matrix
 {
