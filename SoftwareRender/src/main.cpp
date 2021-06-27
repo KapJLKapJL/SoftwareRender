@@ -39,9 +39,10 @@ int main() {
 		if (ddraw.getWindow()->isExit())
 			break;
 
+		
 		angleX += 0.0275125;
 
-		entity.setRotationX(angleX);
+		entity.setRotation(angleX, 0., 0.);
 
 		ddraw.clear();
 

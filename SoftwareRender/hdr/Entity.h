@@ -22,6 +22,7 @@ public:
 
 	void setPosition(const point3D &t);
 	void setRotationX(const double &angle);
+	void setRotation(const double& alpha, const double& beta, const double& gamma);
 
 	matrix<4, 4> getModelMatrix() { return model; };
 private:
