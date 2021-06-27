@@ -105,7 +105,7 @@ bool DDraw::draw(Entity* entity, abstrctShader* shader)
 		barRastrize(v, entity->getDiffuseMap(), shader);
 	}
 
-	//Sleep(55);
+	Sleep(55);
 
 	return true;
 }
@@ -167,6 +167,13 @@ void DDraw::barRastrize(const matrix<3, 3> &v, Texture* texture, abstrctShader *
 		return;
 
 
+
+	auto AB = p[1] - p[0];
+	auto AC = p[2] - p[0];
+	double k_min = AB.x * AC.y - AC.x * AB.y;
+
+
+
 	DDSURFACEDESC2 srfc_desc;
 	CLEANING_STRUCT(srfc_desc);
 	if (FAILED(i_back_buffer->Lock(
@@ -185,9 +192,23 @@ void DDraw::barRastrize(const matrix<3, 3> &v, Texture* texture, abstrctShader *
 	{
 		int y_mempitch = y * mempitch;
 		int y_800 = y * 800;
+
+
+		double PAy = p[0].y - (double)y;
+		double ABxPAy = AB.x * PAy;
+		double ACxPAy = AC.x * PAy;
+
+
 		for (int x = left; x <= right; x++)
 		{
-			auto bar_screen = barycentric(p[0], p[1], p[2], { (double)x, (double)y });
+			double PAx = p[0].x - (double)x;
+			double i_min = ACxPAy - PAx * AC.y;
+			double j_min = PAx * AB.y - ABxPAy;
+
+			point2D uv { i_min / k_min, j_min / k_min };
+
+			point3D bar_screen {1.-uv.x-uv.y, uv.x, uv.y};
+
 			if (bar_screen.x < 0. || bar_screen.y < 0. || bar_screen.z < 0.)
 				continue;
 
