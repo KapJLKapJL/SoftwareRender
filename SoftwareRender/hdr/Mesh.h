@@ -6,21 +6,24 @@
 
 #include "AbstractMesh.h"
 
-
-class Mesh : public abstrctMesh
+namespace ssr
 {
-public:
-	Mesh(char const *filename);
-	virtual ~Mesh() {};
 
-private:
-	void readVertexes() override;
-	void readTextureCoords() override;
-	void readNormals() override;
-	void readFaceIndexes() override;
+	class Mesh : public abstrctMesh
+	{
+	public:
+		Mesh(char const* filename);
+		virtual ~Mesh() {};
 
-	std::ifstream file;
-};
+	private:
+		void readVertexes() override;
+		void readTextureCoords() override;
+		void readNormals() override;
+		void readFaceIndexes() override;
+
+		std::ifstream file;
+	};
+}//namespace ssr
 
 #endif // !MESH_H
 

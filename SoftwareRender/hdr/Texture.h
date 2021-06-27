@@ -3,23 +3,29 @@
 
 #include "MyMath.h"
 
-class Texture
+namespace ssr
 {
-public:
-	Texture(char const *filename);
-	~Texture();
 
-	int getWidth() { return width; }
-	int getHeigth() { return height; }
-	int getNumberChanels() { return nmbr_chanels; }
 
-	color getPixel(const double &u, const double &v);
-private:
-	unsigned char* bits;
-	int width;
-	int height;
-	int nmbr_chanels;
-};
+	class Texture
+	{
+	public:
+		Texture(char const* filename);
+		~Texture();
+
+		int getWidth() { return width; }
+		int getHeigth() { return height; }
+		int getNumberChanels() { return nmbr_chanels; }
+
+		color getPixel(const double& u, const double& v);
+	private:
+		unsigned char* bits;
+		int width;
+		int height;
+		int nmbr_chanels;
+	};
+
+}//namespace ssr
 
 #endif // !TEXTURE_H
 

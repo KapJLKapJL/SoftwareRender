@@ -12,20 +12,20 @@
 #include "../hdr/GouraudShader.h"
 #include "../hdr/PhongShader.h"
 
-const point3D directional_light{0.5, 0.3, -1};
+const ssr::point3D directional_light{0.5, 0.3, -1};
 
 int main() {
-	Texture texture("banana\\textures\\Banana_BaseColor.png");
+	ssr::Texture texture("banana\\textures\\Banana_BaseColor.png");
 	
-	Mesh mesh("banana\\source\\Banana.obj");
-	CubeMesh cube;
+	ssr::Mesh mesh("banana\\source\\Banana.obj");
+	ssr::CubeMesh cube;
 
-	Entity entity;
+	ssr::Entity entity;
 	entity.setDiffuseMap(&texture);
 
 	PhongShader shader;
 
-	DDraw ddraw;
+	ssr::DDraw ddraw;
 
 	if (!ddraw.create())
 		return -1;
@@ -33,7 +33,7 @@ int main() {
 	double angleX = 0.;
 	while (ddraw.isOpen())
 	{
-		if (ddraw.getWindow()->isExit())
+		if (ddraw.isExit())
 			break;
 
 		

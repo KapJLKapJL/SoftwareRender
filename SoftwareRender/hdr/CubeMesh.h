@@ -3,17 +3,22 @@
 
 #include "AbstractMesh.h"
 
-class CubeMesh : public abstrctMesh
+namespace ssr
 {
-public:
-	CubeMesh();
-	virtual ~CubeMesh() {};
-private:
-	void readVertexes() override;
-	void readTextureCoords() override;
-	void readNormals() override;
-	void readFaceIndexes() override;
-};
+
+	class CubeMesh : public abstrctMesh
+	{
+	public:
+		CubeMesh();
+		virtual ~CubeMesh() {};
+	private:
+		void readVertexes() override;
+		void readTextureCoords() override;
+		void readNormals() override;
+		void readFaceIndexes() override;
+	};
+
+}//namespace ssr
 
 #endif // !CUBE_MESH_H
 

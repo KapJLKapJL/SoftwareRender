@@ -7,37 +7,44 @@
 #include <iostream>
 
 #include "Window.h"
-#include "Entity.h"
 #include "MyMath.h"
-#include "AbstractShader.h"
 
-class DDraw
+namespace ssr
 {
-public:
-	DDraw();
-	~DDraw();
+	class Texture;
+	class Entity;
+	class abstrctShader;
 
-	static DDraw* get() { return ddraw_instance; }
-	Window* getWindow() { return &window; }
+	class DDraw
+	{
+	public:
+		DDraw();
+		~DDraw();
 
-	bool isOpen(){ return window.run(); }
+		static DDraw* get() { return ddraw_instance; }
+		Window* getWindow() { return &window; }
 
-	bool create();
-	bool draw(Entity *entity, abstrctShader *shader);
-	bool clear();
-	bool display();
+		bool isOpen() { return window.run(); }
+		bool isExit() { return window.isExit(); }
 
-	void barRastrize(const matrix<3, 3> &v, Texture* texture, abstrctShader* shader);
+		bool create();
+		bool draw(Entity* entity, abstrctShader* shader);
+		bool clear();
+		bool display();
 
-private:
-	static DDraw*	ddraw_instance;
-	Window			window;
+		void barRastrize(const matrix<3, 3>& v, Texture* texture, abstrctShader* shader);
 
-	LPDIRECTDRAW7			i_ddraw;
-	LPDIRECTDRAWSURFACE7	i_primary_surface;
-	LPDIRECTDRAWSURFACE7	i_back_buffer;
+	private:
+		static DDraw* ddraw_instance;
+		Window		window;
 
-	double* z_buffer;
-};
+		LPDIRECTDRAW7			i_ddraw;
+		LPDIRECTDRAWSURFACE7	i_primary_surface;
+		LPDIRECTDRAWSURFACE7	i_back_buffer;
+
+		double* z_buffer;
+	};
+
+}//namespace ssr
 
 #endif // !MY_DDRAW_H
