@@ -15,7 +15,12 @@ public:
 	void setDiffuseMap(Texture* texture) { diffuse_map = texture; }
 	Texture* getDiffuseMap() { return diffuse_map; }
 
-	void setMesh(abstrctMesh* mesh_) { mesh = mesh_; }
+	void setMesh(abstrctMesh* mesh_)
+	{
+		mesh = mesh_;
+		max_radius = mesh->getMaxRadius();
+		resize_coef = 1.;
+	}
 
 	face getFace();
 	bool eof();
@@ -23,6 +28,8 @@ public:
 	void setPosition(const point3D &t);
 	void setRotationX(const double &angle);
 	void setRotation(const double& alpha, const double& beta, const double& gamma);
+	void setMaxRadius(const double& radius) { resize_coef = radius / max_radius; }
+
 
 	matrix<4, 4> getModelMatrix() { return model; };
 private:
@@ -35,6 +42,9 @@ private:
 		                 0., 1., 0., 0.,
 		                 0., 0., 1., 0.,
 		                 0., 0., 0., 1.} };
+
+	double max_radius{0.};
+	double resize_coef{ 1. };
 };
 
 #endif // !ENTITY_H

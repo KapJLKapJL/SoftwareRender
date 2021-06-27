@@ -15,6 +15,7 @@ void CubeMesh::readVertexes()
 	// Vertexes
 	point3D v;
 	v = { 1, 1, 1 };//0
+	max_radius = std::fmax(max_radius, v.length());
 	vertexes.push_back(v);
 	v = { -1, 1, 1 };//1
 	vertexes.push_back(v);

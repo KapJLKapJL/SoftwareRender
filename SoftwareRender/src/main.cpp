@@ -21,12 +21,9 @@ int main() {
 	CubeMesh cube;
 
 	Entity entity;
-	//entity.setMesh(&mesh);
 	entity.setDiffuseMap(&texture);
-	//entity.setPosition({0., 0., 100.});
 
 	PhongShader shader;
-
 
 	DDraw ddraw;
 
@@ -47,11 +44,13 @@ int main() {
 		ddraw.clear();
 
 		entity.setMesh(&mesh);
-		entity.setPosition({ 50., 0., 100. });
+		entity.setPosition({ 0., 5., 5. });
+		entity.setMaxRadius(1.7);
 		ddraw.draw(&entity, &shader);
-
+		
 		entity.setMesh(&cube);
-		entity.setPosition({-3., -1., 5.});
+		entity.setPosition({0., -5., 5.});
+		entity.setMaxRadius(1.7);
 		ddraw.draw(&entity, &shader);
 
 		ddraw.display();

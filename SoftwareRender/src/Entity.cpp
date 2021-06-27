@@ -3,6 +3,12 @@
 face Entity::getFace()
 {
 	auto f = mesh->getFace(face_count++);
+
+	for (int i = 0; i < 3; i++)
+	{
+		f.v[i].coord = f.v[i].coord * resize_coef;
+	}
+
 	return f;
 }
 

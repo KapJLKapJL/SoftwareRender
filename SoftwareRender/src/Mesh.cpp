@@ -42,6 +42,7 @@ void Mesh::readVertexes()
 	point3D v;
 	file >> v.x >> v.y >> v.z;
 	vertexes.push_back(v);
+	max_radius = std::fmax(max_radius, v.length());
 }
 
 void Mesh::readTextureCoords()

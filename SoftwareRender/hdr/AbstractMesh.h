@@ -25,6 +25,8 @@ public:
 		}
 		return f;
 	};
+	
+	double getMaxRadius() { return max_radius; }
 
 protected:
 	std::vector<point3D>  vertexes;
@@ -32,6 +34,7 @@ protected:
 	std::vector<point3D>  normals;
 	std::vector<triangle_indexes> face_indexes;
 	unsigned int faces_vector_size{ 0 };
+	double max_radius{ 0. };
 
 private:
 	virtual void readVertexes() = 0;
