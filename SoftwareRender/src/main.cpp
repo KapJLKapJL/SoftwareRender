@@ -5,7 +5,6 @@
 #include "../hdr/Mesh.h"
 #include "../hdr/Entity.h"
 #include "../hdr/MyMath.h"
-#include "../hdr/AbstractShader.h"
 #include "../hdr/CubeMesh.h"
 #include "../hdr/TextureShader.h"
 #include "../hdr/FlatShader.h"
@@ -23,7 +22,7 @@ int main() {
 
 	ssr::Entity entity;
 
-	PhongShader shader;
+	FlatShader shader;
 
 	ssr::DDraw ddraw;
 
@@ -41,15 +40,15 @@ int main() {
 
 		entity.setMesh(&mesh);
 		entity.setDiffuseMap(&texture);
-		entity.setPosition({ 2., 0., 5. });
+		entity.setPosition({ 2.5, 0., 5. });
 		entity.setRotation(0., 3.14, 0.26);
 		entity.setMaxRadius(3.);
 		ddraw.draw(&entity, &shader);
 		
 		entity.setMesh(&cube);
 		entity.setDiffuseMap(&grid);
-		entity.setPosition({-2., 0., 5.});
-		entity.setRotation(angleX, 0., 0.);
+		entity.setPosition({-1.5, 0., 5.});
+		entity.setRotation(angleX, 0.2, 0.);
 		entity.setMaxRadius(3.);
 		ddraw.draw(&entity, &shader);
 

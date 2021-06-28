@@ -153,8 +153,8 @@ namespace ssr
 		matrix<3, 2> p;
 		for (int i = 0; i < 3; i++)
 		{
-			p[i].x = 400 + v[i].x * 200 / v[i].z;
-			p[i].y = 300 - v[i].y * 200 / v[i].z;
+			p[i].x = 400 + v[i].x * 267 / v[i].z;
+			p[i].y = 300 - v[i].y * 267 / v[i].z;
 		}
 
 		int top = (int)min(p[0][1], min(p[1][1], p[2][1]));;
