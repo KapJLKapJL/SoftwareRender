@@ -22,7 +22,7 @@ int main() {
 
 	ssr::Entity entity;
 
-	FlatShader shader;
+	PhongShader shader;
 
 	ssr::DDraw ddraw;
 
