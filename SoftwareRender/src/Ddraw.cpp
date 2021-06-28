@@ -22,7 +22,7 @@ namespace ssr
 
 	DDraw::~DDraw()
 	{
-		delete z_buffer;
+		delete[] z_buffer; // OMG
 
 		INTRFC_RELEASE(i_back_buffer);
 		INTRFC_RELEASE(i_primary_surface);
