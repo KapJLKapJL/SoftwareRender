@@ -16,41 +16,41 @@ const ssr::point3D directional_light{0.5, 0.3, -1};
 
 int main() {
 	ssr::Texture texture("banana\\textures\\Banana_BaseColor.png");
+	ssr::Texture grid("banana\\textures\\grid_2.jpg");
 	
 	ssr::Mesh mesh("banana\\source\\Banana.obj");
 	ssr::CubeMesh cube;
 
 	ssr::Entity entity;
-	entity.setDiffuseMap(&texture);
 
 	PhongShader shader;
 
 	ssr::DDraw ddraw;
 
+	double angleY = 0.79;
+	double angleX = -0.52;
+
 	if (!ddraw.create())
 		return -1;
-
-	double angleX = 0.;
 	while (ddraw.isOpen())
 	{
 		if (ddraw.isExit())
 			break;
 
-		
-		angleX += 0.0275125;
-
-		entity.setRotation(angleX, 0., 0.);
-
 		ddraw.clear();
 
 		entity.setMesh(&mesh);
-		entity.setPosition({ 0., 5., 5. });
-		entity.setMaxRadius(1.7);
+		entity.setDiffuseMap(&texture);
+		entity.setPosition({ 2., 0., 5. });
+		entity.setRotation(0., 3.14, 0.26);
+		entity.setMaxRadius(3.);
 		ddraw.draw(&entity, &shader);
 		
 		entity.setMesh(&cube);
-		entity.setPosition({0., -5., 5.});
-		entity.setMaxRadius(1.7);
+		entity.setDiffuseMap(&grid);
+		entity.setPosition({-2., 0., 5.});
+		entity.setRotation(angleX, 0., 0.);
+		entity.setMaxRadius(3.);
 		ddraw.draw(&entity, &shader);
 
 		ddraw.display();
