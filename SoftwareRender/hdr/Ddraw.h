@@ -3,11 +3,14 @@
 
 #define INITGUID
 #include <ddraw.h>
+#include <wrl.h>
 
 #include <iostream>
 
 #include "Window.h"
 #include "MyMath.h"
+
+namespace MWRL = Microsoft::WRL;
 
 namespace ssr
 {
@@ -38,11 +41,11 @@ namespace ssr
 		static DDraw* ddraw_instance;
 		Window		window;
 
-		LPDIRECTDRAW7			i_ddraw;
-		LPDIRECTDRAWSURFACE7	i_primary_surface;
-		LPDIRECTDRAWSURFACE7	i_back_buffer;
+		MWRL::ComPtr<IDirectDraw7>          i_ddraw;
+		MWRL::ComPtr<IDirectDrawSurface7>	i_primary_surface;
+		MWRL::ComPtr<IDirectDrawSurface7>   i_back_buffer;
 
-		double* z_buffer;
+		std::unique_ptr<double[]> z_buffer;;
 	};
 
 }//namespace ssr

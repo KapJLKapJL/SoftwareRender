@@ -14,7 +14,7 @@ namespace ssr
 
 	DDraw* DDraw::ddraw_instance = nullptr;
 
-	DDraw::DDraw() :i_ddraw(nullptr), i_primary_surface(nullptr), i_back_buffer(nullptr), z_buffer(nullptr)
+	DDraw::DDraw()
 	{
 		if (!ddraw_instance)
 			ddraw_instance = this;
@@ -22,11 +22,6 @@ namespace ssr
 
 	DDraw::~DDraw()
 	{
-		delete[] z_buffer; // OMG
-
-		INTRFC_RELEASE(i_back_buffer);
-		INTRFC_RELEASE(i_primary_surface);
-		INTRFC_RELEASE(i_ddraw);
 		ddraw_instance = nullptr;
 	}
 
@@ -81,7 +76,7 @@ namespace ssr
 			return false;
 		}
 
-		z_buffer = new double[800 * 600];
+		z_buffer = std::make_unique<double[]>(800*600);
 
 		return true;
 	}
@@ -134,7 +129,7 @@ namespace ssr
 			return false;
 		}
 
-		ZeroMemory(z_buffer, 800 * 600 * 8);
+		ZeroMemory(z_buffer.get(), 800 * 600 * 8);
 
 		return true;
 	}
