@@ -31,6 +31,8 @@ int main() {
 
 	if (!ddraw.create())
 		return -1;
+	
+	double angle = 0;
 	while (ddraw.isOpen())
 	{
 		if (ddraw.isExit())
@@ -38,10 +40,11 @@ int main() {
 
 		ddraw.clear();
 
+		angle += 0.015;
 		entity.setMesh(&mesh);
 		entity.setDiffuseMap(&texture);
 		entity.setPosition({ 2.5, 0., 5. });
-		entity.setRotation(0., 3.14, 0.26);
+		entity.setRotation(0., 3.14+angle, 0.26);
 		entity.setMaxRadius(3.);
 		ddraw.draw(&entity, &shader);
 		
@@ -54,6 +57,7 @@ int main() {
 
 		ddraw.display();
 	}
+	
 
 	return 0;
 }

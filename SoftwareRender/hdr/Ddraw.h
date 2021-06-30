@@ -44,8 +44,10 @@ namespace ssr
 		MWRL::ComPtr<IDirectDraw7>          i_ddraw;
 		MWRL::ComPtr<IDirectDrawSurface7>	i_primary_surface;
 		MWRL::ComPtr<IDirectDrawSurface7>   i_back_buffer;
+		MWRL::ComPtr<IDirectDrawSurface7>   i_video_buffer;
 
-		std::unique_ptr<double[]> z_buffer;;
+		std::unique_ptr<double[]>       z_buffer;
+		std::unique_ptr<unsigned int[]> video_buffer;
 	};
 
 }//namespace ssr

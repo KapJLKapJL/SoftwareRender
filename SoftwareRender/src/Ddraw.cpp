@@ -60,6 +60,7 @@ namespace ssr
 		}
 
 		DDSURFACEDESC2 desc;
+		// In video memory surfaces
 		CLEANING_STRUCT(desc);
 		desc.dwFlags = DDSD_CAPS | DDSD_BACKBUFFERCOUNT;
 		desc.dwBackBufferCount = 1;
@@ -76,7 +77,23 @@ namespace ssr
 			return false;
 		}
 
-		z_buffer = std::make_unique<double[]>(800*600);
+		// In system memory surfaces
+		video_buffer = std::make_unique<unsigned int[]>(800 * 600);
+		CLEANING_STRUCT(desc);
+		desc.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT | DDSD_LPSURFACE | DDSD_PITCH;
+		desc.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
+		desc.dwWidth = 800;
+		desc.dwHeight = 600;
+		desc.lpSurface = video_buffer.get();
+		desc.lPitch = 800 * 4;
+
+		answer = i_ddraw->CreateSurface(&desc, &i_video_buffer, NULL);
+		if (FAILED(answer)) {
+			std::cout << "++++++++++++" << std::endl;
+			return false;
+		}
+
+		z_buffer = std::make_unique<double[]>(800 * 600);
 
 		return true;
 	}
@@ -118,9 +135,9 @@ namespace ssr
 		DDBLTFX desc;
 		CLEANING_STRUCT(desc);
 		desc.dwFillColor = 0;
-
+		
 		if (FAILED(
-			i_back_buffer->Blt(
+			i_video_buffer->Blt(
 				NULL, NULL, NULL,
 				DDBLT_COLORFILL | DDBLT_WAIT,
 				&desc)
@@ -128,7 +145,7 @@ namespace ssr
 		{
 			return false;
 		}
-
+		
 		ZeroMemory(z_buffer.get(), 800 * 600 * 8);
 
 		return true;
@@ -136,6 +153,13 @@ namespace ssr
 
 	bool DDraw::display()
 	{
+		HRESULT answer;
+
+		answer = i_back_buffer->BltFast(0,0, i_video_buffer.Get(), 0, DDBLTFAST_WAIT);
+		if (FAILED(answer)) {
+			return false;
+		}
+
 		if (FAILED(i_primary_surface->Flip(NULL, DDFLIP_WAIT))) {
 			return false;
 		}
@@ -169,30 +193,14 @@ namespace ssr
 			return;
 
 
-
 		auto AB = p[1] - p[0];
 		auto AC = p[2] - p[0];
 		double k_min = AB.x * AC.y - AC.x * AB.y;
 
 
-
-		DDSURFACEDESC2 srfc_desc;
-		CLEANING_STRUCT(srfc_desc);
-		if (FAILED(i_back_buffer->Lock(
-			NULL,
-			&srfc_desc,
-			DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT,
-			NULL)))
-		{
-			return;
-		}
-
-		int mempitch = (int)(srfc_desc.lPitch >> 2);
-		UINT* video_buffer = (UINT*)srfc_desc.lpSurface;
-
 		for (int y = top; y <= bot; y++)
 		{
-			int y_mempitch = y * mempitch;
+			//int y_mempitch = y * mempitch;
 			int y_800 = y * 800;
 
 
@@ -222,14 +230,10 @@ namespace ssr
 				if (z_buffer[x + y_800] > z)
 					continue;
 
-				video_buffer[x + y_mempitch] = shader->pixel(bar_3D, texture).ARGB; // Ужас
+				video_buffer[x + y_800] = shader->pixel(bar_3D, texture).ARGB; // Ужас
 				z_buffer[x + y_800] = z;
 			}
 		}
-
-		if (FAILED(i_back_buffer->Unlock(NULL)))
-			return;
-
-	}
+	}// BarRasterize
 
 }//namespace ssr
